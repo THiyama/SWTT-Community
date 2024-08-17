@@ -8,7 +8,7 @@ from utils.utils import create_session
 
 st.title("集計画面")
 
-session = create_session("team_test", is_info=False)
+session = st.session_state.snow_session
 problem_ids = st.session_state.problem_ids
 pdf_problem_ids = pd.DataFrame(problem_ids, columns=["problem_id"])
 

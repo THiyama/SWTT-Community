@@ -6,7 +6,7 @@ from utils.utils import create_session
 
 TEAMS = [
     "",
-    "AccountAdmin",
+    "Account_Admin",
     "BusinessCritical",
     "Cortex",
     "DCR_DynamicTables",
@@ -20,7 +20,7 @@ TEAMS = [
     "Lineage",
     "Marketplace",
     "Notebooks",
-    "OrgAdmin",
+    "Org_Admin",
     "POLARIS",
     "QualityMonitoring",
     "ResouceMonitor",
@@ -34,6 +34,7 @@ TEAMS = [
 
 st.title("top page")
 team_id = st.selectbox("チーム名を選択してください", options=TEAMS)
+st.write(team_id)
 if team_id:
     st.session_state.team_id = team_id
     st.session_state.snow_session = create_session(team_id)

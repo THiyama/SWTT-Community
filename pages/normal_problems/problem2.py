@@ -17,6 +17,9 @@ def run(tab_name: str, session: Session):
     answer = st.selectbox("Your answer:", options=options, key=f"{tab_name}_answer")
 
     if st.button("submit", key=f"{tab_name}_submit"):
+        if not answer:
+            st.warn("選択してください")
+
         state["timestamp"] = datetime.now()
         st.write(f"You answered: {answer}")
 

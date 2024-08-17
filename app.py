@@ -1,8 +1,7 @@
 import streamlit as st
 from snowflake.snowpark import Session
 
-from utils.utils import create_session
-
+from utils.utils import create_session, display_team_id_sidebar
 
 TEAMS = [
     "",
@@ -33,10 +32,18 @@ TEAMS = [
 ]
 
 st.title("top page")
-team_id = st.selectbox("チーム名を選択してください", options=TEAMS)
-st.write(team_id)
+
+if "team_id" in st.session_state:
+    index = TEAMS.index(st.session_state.team_id)
+else:
+    index = 0
+team_id = st.selectbox("チーム名を選択してください", options=TEAMS, index=index)
 if team_id:
     st.session_state.team_id = team_id
     st.session_state.snow_session = create_session(team_id)
-elif "team_id" in st.session_state:
     st.info(f"あなたのチームIDは、{st.session_state.team_id}です。")
+
+if st.button("問題を解く"):
+    st.switch_page("pages/01_normal_problems.py")
+
+display_team_id_sidebar()

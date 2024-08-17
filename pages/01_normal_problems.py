@@ -4,10 +4,19 @@ import importlib
 
 from snowflake.snowpark import Session
 
-from utils.utils import check_is_clear
+from utils.utils import (
+    check_is_clear,
+    display_team_id_sidebar,
+    display_team_id,
+    get_session,
+)
 
+st.title("通常問題")
 
-session = st.session_state.snow_session
+session = get_session()
+display_team_id_sidebar()
+display_team_id()
+
 
 problems_dir = "pages/normal_problems"
 problem_files = [f for f in os.listdir(problems_dir) if f.endswith(".py")]

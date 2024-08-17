@@ -4,9 +4,13 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.utils import create_session
+from utils.utils import display_team_id_sidebar, get_session
 
 st.title("集計画面")
+
+session = get_session()
+display_team_id_sidebar()
+
 
 session = st.session_state.snow_session
 problem_ids = st.session_state.problem_ids

@@ -20,13 +20,17 @@ def create_session(team_id: str, is_info: bool = True) -> Session:
 def check_is_clear(session: Session, state: dict):
     submit_table = session.table("submit")
 
-    result = submit_table.filter(
-        (F.col("team_id") == state["team_id"])
-        & (F.col("problem_id") == state["problem_id"])
-        & (F.col("is_clear") == True)
-    ).count()
+    try:
+        result = submit_table.filter(
+            (F.col("team_id") == state["team_id"])
+            & (F.col("problem_id") == state["problem_id"])
+            & (F.col("is_clear") == True)
+        ).count()
+        return result > 0
 
-    return result > 0
+    except Exception as e:
+        st.write(e)
+        return False
 
 
 def save_table(state: dict, session: Session):
@@ -53,3 +57,24 @@ def init(tab_name: str, session: Session):
     state["is_clear"] = check_is_clear(session, state)
 
     return state
+
+
+def display_team_id_sidebar():
+    with st.sidebar:
+        try:
+            st.write(f"チームID: {st.session_state.team_id}")
+        except AttributeError as e:
+            pass
+
+
+def display_team_id():
+    st.write(f"あなたが選択したチームIDは 「**{st.session_state.team_id}**」 です。")
+
+
+def get_session():
+    if "snow_session" not in st.session_state:
+        st.warning("チームIDを選択してください。")
+        st.stop()
+    else:
+        session = st.session_state.snow_session
+        return session

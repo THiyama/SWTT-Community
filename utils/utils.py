@@ -74,6 +74,8 @@ def display_team_id():
 def get_session():
     if "snow_session" not in st.session_state:
         st.warning("チームIDを選択してください。")
+        if st.button("チームID選択に戻る"):
+            st.switch_page("app.py")
         st.stop()
     else:
         session = st.session_state.snow_session

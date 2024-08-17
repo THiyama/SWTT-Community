@@ -13,7 +13,7 @@ def run(tab_name: str, session: Session):
     st.write("Question 1: What is the capital of France?")
     answer = st.text_input("Your answer:", key=f"{tab_name}_answer")
 
-    if st.button("submit"):
+    if st.button("submit", key=f"{tab_name}_submit"):
         state["timestamp"] = datetime.now()
         st.write(f"You answered: {answer}")
 

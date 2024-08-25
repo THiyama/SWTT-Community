@@ -8,7 +8,7 @@ TEAMS = [
     "Account_Admin",
     "BusinessCritical",
     "Cortex",
-    "DCR_DynamicTables",
+    "DataCleanRoom",
     "Enterprise_Edtion",
     "Fail_Safe",
     "Git",

@@ -28,8 +28,8 @@ def check_is_clear(session: Session, state: dict):
         ).count()
         return result > 0
 
-    except Exception as e:
-        st.write(e)
+    except IndexError as e:
+        print(e)
         return False
 
 
@@ -64,7 +64,7 @@ def display_team_id_sidebar():
         try:
             st.write(f"チームID: {st.session_state.team_id}")
         except AttributeError as e:
-            pass
+            print(e)
 
 
 def display_team_id():

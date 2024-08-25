@@ -14,7 +14,7 @@ def create_session(team_id: str, is_info: bool = True) -> Session:
     except Exception as e:
         if is_info:
             st.error("Snowflakeに接続できませんでした。")
-            st.write(e)
+            print(e)
 
 
 def check_is_clear(session: Session, state: dict):

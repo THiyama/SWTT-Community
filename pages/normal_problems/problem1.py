@@ -4,11 +4,11 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.utils import save_table, init
+from utils.utils import save_table, init_state
 
 
 def run(tab_name: str, session: Session):
-    state = init(tab_name, session)
+    state = init_state(tab_name, session)
 
     st.write("Question 1: What is the capital of France?")
     answer = st.text_input("Your answer:", key=f"{tab_name}_answer")

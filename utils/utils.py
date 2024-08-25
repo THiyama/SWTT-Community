@@ -44,7 +44,7 @@ def save_table(state: dict, session: Session):
     st.rerun()
 
 
-def init(tab_name: str, session: Session):
+def init_state(tab_name: str, session: Session):
     state_name = f"{tab_name}_state"
     if state_name not in st.session_state:
         st.session_state.state = {}

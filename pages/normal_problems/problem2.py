@@ -4,11 +4,11 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.utils import save_table, init
+from utils.utils import save_table, init_state
 
 
 def run(tab_name: str, session: Session):
-    state = init(tab_name, session)
+    state = init_state(tab_name, session)
 
     st.write(
         "Question 2: select * 〇〇 from <tables>; で、〇〇のオプションとして存在しないものはどれ？"

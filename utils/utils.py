@@ -1,7 +1,11 @@
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
+
+from utils.attempt_limiter import check_is_failed
 
 
 @st.cache_resource
@@ -34,14 +38,22 @@ def check_is_clear(session: Session, state: dict):
 
 
 def save_table(state: dict, session: Session):
+    state["timestamp"] = datetime.now()
     df = pd.DataFrame([state], index=[0])
     new_column_order = ["team_id", "problem_id", "timestamp", "is_clear"]
     df = df[new_column_order]
 
     snow_df = session.create_dataframe(df)
-    snow_df.write.mode("append").save_as_table("submit")
-    st.success("結果をレコードに保存しました")
-    st.rerun()
+
+    if state["is_clear"]:
+        snow_df.write.mode("append").save_as_table("submit")
+        st.rerun()
+    else:
+        snow_df.write.mode("append").save_as_table("submit", block=False)
+
+    if not state["is_clear"]:
+        if check_is_failed(session, state):
+            st.rerun()
 
 
 def init_state(tab_name: str, session: Session):

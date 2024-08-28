@@ -10,6 +10,7 @@ from utils.utils import (
     display_team_id,
     get_session,
 )
+from utils.attempt_limiter import check_is_failed
 
 st.title("通常問題")
 
@@ -36,6 +37,8 @@ for problem_id in tabs.keys():
     state["problem_id"] = problem_id
     if check_is_clear(session, state):
         checker = ":white_check_mark: "
+    elif check_is_failed(session, state):
+        checker = ":x: "
     else:
         checker = ""
 

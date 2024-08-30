@@ -40,10 +40,9 @@ else:
 team_id = st.selectbox("チーム名を選択してください", options=TEAMS, index=index)
 if team_id:
     st.session_state.team_id = team_id
+    if st.button("問題を解く"):
+        st.switch_page("pages/01_normal_problems.py")
     st.session_state.snow_session = create_session(team_id)
     st.info(f"あなたのチームIDは、{st.session_state.team_id}です。")
-
-if st.button("問題を解く"):
-    st.switch_page("pages/01_normal_problems.py")
 
 display_team_id_sidebar()

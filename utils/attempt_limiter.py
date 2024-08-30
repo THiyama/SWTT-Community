@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import streamlit as st
 import pandas as pd
 from snowflake.snowpark import Session
 from snowflake.snowpark import functions as F
@@ -22,19 +23,16 @@ class AttemptLimiter:
 
     def __check_attempt_table(self) -> bool:
         session = self.session
-        attempt_table = session.table("attempt")
+        attempt_table = session.table("submit2")
 
         try:
-            result = attempt_table.filter(
+            current_attempts = attempt_table.filter(
                 (F.col("team_id") == self.team_id)
                 & (F.col("problem_id") == self.problem_id)
                 & (F.col("key") == self.key)
             ).count()
 
-            if result < self.max_attempts:
-                return True
-            else:
-                return False
+            return current_attempts < self.max_attempts
 
         except IndexError as e:
             print(e)
@@ -48,18 +46,26 @@ class AttemptLimiter:
                 {
                     "team_id": self.team_id,
                     "problem_id": self.problem_id,
-                    "key": self.key,
                     "timestamp": datetime.now(),
+                    "is_clear": None,
+                    "key": self.key,
                     "max_attempts": self.max_attempts,
                 }
             ],
             index=[0],
         )
-        new_column_order = ["team_id", "problem_id", "key", "timestamp", "max_attempts"]
+        new_column_order = [
+            "team_id",
+            "problem_id",
+            "timestamp",
+            "is_clear",
+            "key",
+            "max_attempts",
+        ]
         df = df[new_column_order]
 
         snow_df = session.create_dataframe(df)
-        snow_df.write.mode("append").save_as_table("attempt", block=False)
+        snow_df.write.mode("append").save_as_table("submit2", block=False)
 
     def check_attempt(self) -> bool:
         return self.__check_attempt_table()
@@ -78,35 +84,31 @@ def init_attempt(
 
 
 def check_is_failed(session, state):
-    attempt_table = session.table("attempt")
+    attempt_table = session.table("submit2")
 
     try:
-        result = attempt_table.filter(
-            (F.col("team_id") == state["team_id"])
-            & (F.col("problem_id") == state["problem_id"])
-            & (F.col("key") == "main")
-        ).count()
-
-        max_attempts = (
+        query_result = (
             attempt_table.filter(
                 (F.col("team_id") == state["team_id"])
                 & (F.col("problem_id") == state["problem_id"])
                 & (F.col("key") == "main")
             )
             .select("max_attempts")
-            .to_pandas()
+            .collect()
         )
 
-        if not max_attempts.empty:
-            max_attempts = max_attempts.iloc[0, 0]
+        if query_result:
+            max_attempts = query_result[0]["MAX_ATTEMPTS"]
+            current_attempts = len(query_result)
+            return current_attempts >= max_attempts
         else:
             return False
-
-        if result < max_attempts:
-            return False
-        else:
-            return True
 
     except IndexError as e:
         print(e)
         return False
+
+
+def process_exceeded_limit(placeholder, state):
+    placeholder.error("回答回数の上限に達しています。")
+    st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = True

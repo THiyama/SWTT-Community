@@ -19,7 +19,7 @@ pdf_problem_ids = pd.DataFrame(problem_ids, columns=["problem_id"])
 
 @st.fragment(run_every="10s")
 def update_chart():
-    df = session.table("submit")
+    df = session.table("submit2")
     df_grouped = (
         df.select(F.col("problem_id"), F.col("team_id"), F.col("is_clear"))
         .group_by([F.col("problem_id"), F.col("team_id")])

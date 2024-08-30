@@ -38,6 +38,8 @@ for problem_id in tabs.keys():
     if f"{state['problem_id']}_{state['team_id']}_title" not in st.session_state:
         if check_is_clear(session, state):
             checker = ":white_check_mark: "
+        elif check_is_failed(session, state):
+            checker = ":x: "
         else:
             checker = ""
         st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
@@ -55,4 +57,9 @@ selected_tab = st.tabs(tab_titles)
 
 for i, tab_title in enumerate(problem_ids):
     with selected_tab[i]:
-        tabs[tab_title].run(tab_title, session)
+        try:
+            tabs[tab_title].run(tab_title, session)
+
+        except AttributeError as e:
+            st.write("in develop...")
+            print(e)

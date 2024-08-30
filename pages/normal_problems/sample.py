@@ -41,9 +41,9 @@ def run(tab_name: str, session: Session):
         if main_attempt.check_attempt():
             if answer:
                 process_answer(answer, state, session)
+                main_attempt.add_attempt()
             else:
                 st.warning("選択してください")
 
-            main_attempt.add_attempt()
         else:
             st.error("回答回数の上限に達しています。")

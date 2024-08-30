@@ -35,14 +35,18 @@ state = {}
 state["team_id"] = session.get_current_user()[1:-1]
 for problem_id in tabs.keys():
     state["problem_id"] = problem_id
-    if check_is_clear(session, state):
-        checker = ":white_check_mark: "
-    elif check_is_failed(session, state):
-        checker = ":x: "
-    else:
-        checker = ""
+    if f"{state['problem_id']}_{state['team_id']}_title" not in st.session_state:
+        if check_is_clear(session, state):
+            checker = ":white_check_mark: "
+        else:
+            checker = ""
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+            checker + problem_id
+        )
 
-    tab_titles.append(f"{checker}{problem_id}")
+    tab_titles.append(
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+    )
     problem_ids.append(problem_id)
 
 st.session_state["problem_ids"] = problem_ids

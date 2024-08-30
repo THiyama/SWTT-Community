@@ -38,10 +38,12 @@ def run(tab_name: str, session: Session):
     if check_is_failed(session, state):
         st.error("回答回数の上限に達しています。")
     elif st.button("submit", key=f"{tab_name}_submit"):
-        if main_attempt.add_attempt():
+        if main_attempt.check_attempt():
             if answer:
                 process_answer(answer, state, session)
             else:
                 st.warning("選択してください")
+
+            main_attempt.add_attempt()
         else:
             st.error("回答回数の上限に達しています。")

@@ -1,10 +1,8 @@
 from datetime import datetime
 
 import pandas as pd
-import streamlit as st
 from snowflake.snowpark import Session
 from snowflake.snowpark import functions as F
-from snowflake.snowpark.exceptions import SnowparkSQLException
 
 
 class AttemptLimiter:
@@ -63,12 +61,11 @@ class AttemptLimiter:
         snow_df = session.create_dataframe(df)
         snow_df.write.mode("append").save_as_table("attempt", block=False)
 
+    def check_attempt(self) -> bool:
+        return self.__check_attempt_table()
+
     def add_attempt(self):
-        if self.__check_attempt_table():
-            self.__add_attempt_table()
-            return True
-        else:
-            return False
+        self.__add_attempt_table()
 
 
 def init_attempt(

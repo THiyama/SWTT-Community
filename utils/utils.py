@@ -47,13 +47,28 @@ def save_table(state: dict, session: Session):
 
     if state["is_clear"]:
         snow_df.write.mode("append").save_as_table("submit")
-        st.rerun()
+        if (
+            ":white_check_mark:"
+            not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+        ):
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+                ":white_check_mark: "
+                + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+            )
+
     else:
         snow_df.write.mode("append").save_as_table("submit", block=False)
 
     if not state["is_clear"]:
-        if check_is_failed(session, state):
-            st.rerun()
+        if (
+            check_is_failed(session, state)
+            and ":white_check_mark:"
+            not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+        ):
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+                ":x: "
+                + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+            )
 
 
 def init_state(tab_name: str, session: Session):

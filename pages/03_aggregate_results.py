@@ -4,12 +4,25 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.utils import display_team_id_sidebar, get_session
+from utils.utils import (
+    display_team_id_sidebar,
+    display_page_titles_sidebar,
+    get_session,
+    get_team_id,
+)
+from utils.designs import apply_default_custom_css, display_applied_message
 
-st.title("集計画面")
+st.title("📊挑戦状況")
+
+display_page_titles_sidebar()
+display_team_id_sidebar()
+get_team_id()
+
+css_name = apply_default_custom_css()
+message = "ここでは、現在の各チームの挑戦状況を確認できるぞ。\n\nそなたらもどんどん挑戦して進むのだ！"
+display_applied_message(message, css_name)
 
 session = get_session()
-display_team_id_sidebar()
 
 
 session = st.session_state.snow_session

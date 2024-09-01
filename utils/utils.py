@@ -5,26 +5,27 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.attempt_limiter import check_is_failed
+from utils.attempt_limiter import check_is_failed, process_limit_success_error
 
 
 @st.cache_resource
-def create_session(team_id: str, is_info: bool = True) -> Session:
+def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
     try:
         session = st.connection(team_id, type="snowflake").session()
         if is_info:
-            st.success("Snowflakeに接続できました。")
+            st.success("データクリスタルとのリンクに成功したぞ。次なる試練へ進むのだ！")
         return session
     except Exception as e:
         if is_info:
-            st.error("Snowflakeに接続できませんでした。")
+            _placeholder.empty()
+            _placeholder.error("ふむ、、なにか問題が発生したようだな")
             print(e)
 
 
 def get_session():
     if "snow_session" not in st.session_state:
-        st.warning("チームIDを選択してください。")
-        if st.button("チームID選択に戻る"):
+        st.warning("そなたらは、まだチームとして誓いが結ばれていないようだの・・・。")
+        if st.button("チーム結集に戻る"):
             st.switch_page("app.py")
         st.stop()
     else:
@@ -32,16 +33,36 @@ def get_session():
         return session
 
 
+def display_page_titles_sidebar():
+    with st.sidebar:
+        st.page_link("app.py", label="Gather Teams", icon="👥")
+        st.page_link("pages/01_normal_problems.py", label="Challenge Arena", icon="⚔️")
+        st.page_link(
+            "pages/03_aggregate_results.py", label="OVerall Progress", icon="📊"
+        )
+
+
 def display_team_id_sidebar():
     with st.sidebar:
         try:
-            st.write(f"チームID: {st.session_state.team_id}")
+            st.divider()
+            st.write(f"チーム名: {st.session_state.team_id}")
         except AttributeError as e:
             print(e)
 
 
 def display_team_id():
-    st.write(f"あなたが選択したチームIDは 「**{st.session_state.team_id}**」 です。")
+    st.write(f"そなたらのチームは 「**{st.session_state.team_id}**」 だ。")
+
+
+def get_team_id():
+    if "team_id" not in st.session_state:
+        st.warning("そなたらは、まだチームとして誓いが結ばれていないようだの・・・。")
+        if st.button("チーム結集に戻る"):
+            st.switch_page("app.py")
+        st.stop()
+    else:
+        return st.session_state.team_id
 
 
 def init_state(tab_name: str, session: Session, max_attempts: int = 3):
@@ -105,7 +126,6 @@ def save_table(state: dict, session: Session):
             and ":white_check_mark:"
             not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
         ):
-            print("****ロジック入った****")
             st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
                 ":x: "
                 + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
@@ -113,10 +133,6 @@ def save_table(state: dict, session: Session):
             st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = (
                 True
             )
-
-        else:
-            print("check_is_failed " + str(check_is_failed(session, state)))
-            print("****ロジック入らなかった****")
 
 
 def check_is_clear(session: Session, state: dict):
@@ -140,4 +156,4 @@ def clear_submit_button(placeholder, state):
         st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = False
     elif st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"]:
         placeholder.empty()
-        placeholder.error("回答回数の上限に達しています。")
+        process_limit_success_error(placeholder, state)

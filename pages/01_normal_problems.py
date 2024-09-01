@@ -6,17 +6,32 @@ from snowflake.snowpark import Session
 
 from utils.utils import (
     check_is_clear,
+    display_page_titles_sidebar,
     display_team_id_sidebar,
     display_team_id,
     get_session,
+    get_team_id,
 )
+from utils.designs import apply_default_custom_css, display_applied_message
 from utils.attempt_limiter import check_is_failed
 
-st.title("通常問題")
+display_page_titles_sidebar()
+st.title("⚔️挑戦の場")
+
+
+team_id = get_team_id()
+css_name = apply_default_custom_css()
+message = f"""
+    ほう、そなたらがかの **{team_id}** チームか。
+
+    さあ、8つの知恵の的屋に挑戦し、クリスタルの力を取り戻すのだ
+    """
+display_applied_message(message, css_name)
+
+st.write("")
 
 session = get_session()
 display_team_id_sidebar()
-display_team_id()
 
 
 problems_dir = "pages/normal_problems"

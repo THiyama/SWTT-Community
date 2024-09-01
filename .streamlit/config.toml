@@ -1,0 +1,7 @@
+[client]
+showSidebarNavigation = false
+
+[theme]
+base = "dark"
+secondaryBackgroundColor = "#11567F"
+font = "serif"

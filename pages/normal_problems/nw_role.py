@@ -355,7 +355,7 @@ def processing_correct_ans() -> None:
 
 
 def processing_incorrect_ans() -> None:
-    st.error("ハズレ！")
+    st.error("ハズレ！ 回答を削除して検証してみよう！！！")
 
 
 def main():
@@ -474,6 +474,7 @@ def main():
     )
 
     st.dataframe(showed_table, hide_index=True, use_container_width=True)
+    return 0, placeholder
 
 
 from snowflake.snowpark import Session
@@ -500,7 +501,6 @@ def run(tab_name: str, session: Session):
         else:
             state["is_clear"] = False
             save_table(state, session)
-
     else:
         process_exceeded_limit(placeholder, state)
 

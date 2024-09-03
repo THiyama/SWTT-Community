@@ -56,8 +56,11 @@ def display_applied_message(message: str, css_name: str = DEFAULT_TOP_TEXT_AREA)
         unsafe_allow_html=True,
     )
 
-
-def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA) -> None:
+@st.cache_data
+def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA, image_file: str = 'pages/common/images/sky.png') -> None:
+    import base64
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
     st.html(
         f"""
         <div class="{css_name}">
@@ -67,10 +70,10 @@ def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA) -> None:
             position:relative;
             overflow:hidden;
             box-shadow:0 4px 20px rgba(0, 0, 0, 0.2);
+            background-image: url(data:image/{"png"};base64,{encoded_string});
             margin:0 auto;
             width:300px;
             height:30px;
-            background-color:#f0f8ff;
             margin: 0 calc(50% - 50vw);
             width: 100vw;
         }}
@@ -81,7 +84,7 @@ def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA) -> None:
             width:200%;
             height:200%;
             content:"";
-            background-color:#1e90ff;
+            background-color:#1e50a2;
             animation:wave linear 6s infinite;
         }}
         .{css_name}::before {{
@@ -146,10 +149,25 @@ def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM
     )
 
 @st.cache_data
-def background_image(image_file: str = '../../pages/common/images/sky.png'):
+def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode : bool = True):
     import base64
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
+
+    dark_mode_css = ''
+    if dark_mode:
+        dark_mode_css = """
+            .main::before {
+                background-color: rgba(0,0,0,0.4);
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                content: ' ';
+        }
+        """
+
     st.markdown(
     f"""
     <style>
@@ -158,8 +176,8 @@ def background_image(image_file: str = '../../pages/common/images/sky.png'):
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        color: #ffe4b5;
     }}
+    {dark_mode_css}
     .stApp > header {{
         background-color: rgba(255,255,255,0.6);
     }}

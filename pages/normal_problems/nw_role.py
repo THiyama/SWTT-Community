@@ -4,16 +4,19 @@ import re
 import time
 
 
-def header_animation() -> None:
+def header_animation(image_file: str = 'pages/common/images/sky.png') -> None:
+    import base64
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
     _animation_header = f"""
     .ani_head {{
     	position:relative;
     	overflow:hidden;
     	box-shadow:0 4px 20px rgba(0, 0, 0, 0.2);
+        background-image: url(data:image/{"png"};base64,{encoded_string});
     	margin:0 auto;
     	width:300px;
     	height:30px;
-    	background-color:#f0f8ff;
         margin: 0 calc(50% - 50vw);
         width: 100vw;
     }}
@@ -24,7 +27,7 @@ def header_animation() -> None:
     	width:200%;
     	height:200%;
     	content:"";
-    	background-color:#1e90ff;
+    	background-color:#1e50a2;
     	animation:wave linear 6s infinite;
     }}
     .ani_head::before {{

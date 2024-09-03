@@ -1,9 +1,11 @@
 import streamlit as st
 from snowflake.snowpark import Session
 
-from utils.utils import save_table, init_state, clear_submit_button
+from utils.utils import save_table, init_state, clear_submit_button, string_to_hash_int
 from utils.designs import header_animation, display_problem_statement
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
+
+import random
 
 MAX_ATTEMPTS_MAIN = 2
 
@@ -13,9 +15,14 @@ PROGRAM_LOGOS = ["pages/normal_problems/resources/problem4/logo_data_superheroes
 
 
 # ランダムな並び順を取得する
-def get_random_order():
-    # TODO: Implement this function
-    return [1, 2, 3, 4]
+@st.cache_data
+def get_random_order(team_id: str) -> list:
+    # チームIDからシード値を生成する
+    seed = string_to_hash_int(team_id)
+    random.seed(seed)
+    # [1, 2, 3, 4]のリストをシャッフルする
+    random.shuffle(order := [1, 2, 3, 4])
+    return order
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
@@ -28,7 +35,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # 選択肢をシャッフルする
-    order = get_random_order()
+    order = get_random_order(st.session_state.team_id)
     options = [PROGRAM_LIST[i - 1] for i in order]
     answer = st.radio("Your answer:", options, index=None)
 

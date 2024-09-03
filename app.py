@@ -6,7 +6,7 @@ from utils.utils import (
     display_team_id_sidebar,
     display_page_titles_sidebar,
 )
-from utils.designs import apply_default_custom_css, display_applied_message
+from utils.designs import apply_default_custom_css, display_applied_message, background_image
 
 display_page_titles_sidebar()
 
@@ -77,3 +77,9 @@ if team_id:
     if placeholder.button("挑戦を開始する"):
         st.switch_page("pages/01_normal_problems.py")
     st.session_state.snow_session = create_session(team_id, placeholder)
+
+
+background_image('pages/common/images/sky.png', dark_mode = False)
+
+
+

@@ -10,10 +10,10 @@ from utils.utils import (
     get_session,
     get_team_id,
 )
-from utils.designs import apply_default_custom_css, display_applied_message
+from utils.designs import apply_default_custom_css, display_applied_message, background_image
 
 st.title("📊挑戦状況")
-
+background_image('pages/common/images/library.png')
 display_page_titles_sidebar()
 display_team_id_sidebar()
 get_team_id()

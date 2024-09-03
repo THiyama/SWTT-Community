@@ -46,7 +46,10 @@ def display_team_id_sidebar():
     with st.sidebar:
         try:
             st.divider()
-            st.write(f"チーム名: {st.session_state.team_id}")
+            if "team_id" in st.session_state:
+                st.write(f"チーム名: {st.session_state.team_id}")
+            else:
+                st.write(f"チーム名: 未結成")
         except AttributeError as e:
             print(e)
 

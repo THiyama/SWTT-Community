@@ -7,6 +7,8 @@ from snowflake.snowpark import Session
 
 from utils.attempt_limiter import check_is_failed, process_limit_success_error
 
+import hashlib
+
 
 @st.cache_resource
 def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
@@ -160,3 +162,15 @@ def clear_submit_button(placeholder, state):
     elif st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"]:
         placeholder.empty()
         process_limit_success_error(placeholder, state)
+
+
+def string_to_hash_int(base_string: str) -> int:
+    # 文字列をUTF-8でエンコードし、SHA256ハッシュを計算
+    hash_object = hashlib.sha256(base_string.encode('utf-8'))
+    hash_hex = hash_object.hexdigest()
+    
+    # 16進数の文字列を整数に変換
+    hash_int = int(hash_hex, 16)
+    
+    # 整数値をシードとして返す
+    return hash_int

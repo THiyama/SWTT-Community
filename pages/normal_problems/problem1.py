@@ -2,9 +2,11 @@ import streamlit as st
 from snowflake.snowpark import Session
 from streamlit_image_select import image_select
 
-from utils.utils import save_table, init_state, clear_submit_button
+from utils.utils import save_table, init_state, clear_submit_button, string_to_hash_int
 from utils.designs import header_animation, display_problem_statement
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
+
+import random
 
 MAX_ATTEMPTS_MAIN = 3
 
@@ -15,21 +17,39 @@ MAX_ATTEMPTS_MAIN = 3
 # Native Apps Framework: 2024/01/31 -> 4
 # Universal Search: 2024/06/03 -> 6
 
+# 画像変更を抑止するフラグ
+PREVENT_IMAGE_CHANGE = True
+
 
 # 問題用のデータセットを定義する
 @st.cache_data
-def get_data():
-    lst = [
-        ["button0", "",                       "",  "pages/normal_problems/resources/problem1/none.png",    "pages/normal_problems/resources/problem1/button1.none.png"],
+def get_data(team_id):
+    common_item = ["button0", "", "", "pages/normal_problems/resources/problem1/none.png", "pages/normal_problems/resources/problem1/button1.none.png"]
+
+    base_list = [
         ["button1", "Data Sharing",           "1", "pages/normal_problems/resources/problem1/button1.png", "pages/normal_problems/resources/problem1/button1.inactive.png"],
         ["button2", "Snowpark",               "2", "pages/normal_problems/resources/problem1/button2.png", "pages/normal_problems/resources/problem1/button2.inactive.png"],
         ["button3", "Streamlit in Snowflake", "3", "pages/normal_problems/resources/problem1/button3.png", "pages/normal_problems/resources/problem1/button3.inactive.png"],
         ["button4", "Dynamic Tables",         "4", "pages/normal_problems/resources/problem1/button4.png", "pages/normal_problems/resources/problem1/button4.inactive.png"],
         ["button5", "Native Apps Framework",  "5", "pages/normal_problems/resources/problem1/button5.png", "pages/normal_problems/resources/problem1/button5.inactive.png"],
-        # ["button6", "Universal Search",       "6", "pages/normal_problems/resources/problem1/button6.png", "pages/normal_problems/resources/problem1/button6.inactive.png"],
     ]
-    # TODO: チームごとに異なる順番で表示するための処理を追加する
-    return lst
+
+    # デザイン上、削除した選択肢
+    # ["button6", "Universal Search", "6", "pages/normal_problems/resources/problem1/button6.png", "pages/normal_problems/resources/problem1/button6.inactive.png"],
+
+    # base_lstをシャッフルする。randomのシード値をチームIDから生成する
+    seed = string_to_hash_int(team_id)
+    random.seed(seed)
+    random.shuffle(base_list)
+
+    # データを結合する
+    result_list = [common_item] + base_list
+
+    # インデックスを振り直す
+    for i, _ in enumerate(result_list):
+        if i != 0:
+            result_list[i][2] = f"{i}"
+    return result_list
 
 
 # キャプションを生成する
@@ -47,13 +67,16 @@ def make_captions(data, show_hint):
 
 
 # 画像一覧を取得する
-def get_images(data, selected_list=[]):
+def get_images(data, selected_list=[], prevent_image_change=PREVENT_IMAGE_CHANGE):
     result = []
     for row in data:
-        if row[0] in selected_list:
-            result.append(row[4])
-        else:
+        if prevent_image_change:
             result.append(row[3])
+        else:
+            if row[0] in selected_list:
+                result.append(row[4])
+            else:
+                result.append(row[3])
     return result
 
 
@@ -76,7 +99,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # データを取得する
-    data = get_data()
+    data = get_data(st.session_state.team_id)
 
     # ヒントを表示するかどうかを選択するトグルボタン
     show_hint = st.toggle("ヒント：機能名を表示する", False)
@@ -96,7 +119,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
 
     # 画像を選択する
     img = image_select(
-        label="hogehoge",
+        label="",
         images=get_images(data, selected_list),
         captions=captions,
         use_container_width=False,

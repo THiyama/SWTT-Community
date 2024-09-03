@@ -24,7 +24,9 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
 
 def process_answer(answer: str, state, session: Session) -> None:
     correct_value = 0.8
-    answer_sentiment = Sentiment(Translate(answer, "ja", "en"))
+    answer_sentiment = Sentiment(
+        Translate(answer, "ja", "en", session=session), session=session
+    )
     if answer_sentiment > correct_value:
         state["is_clear"] = True
         st.success(f"ポジティブ！あなたのポジティブは{answer_sentiment}でした。")

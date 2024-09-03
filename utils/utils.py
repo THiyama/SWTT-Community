@@ -38,7 +38,7 @@ def display_page_titles_sidebar():
         st.page_link("app.py", label="Gather Teams", icon="👥")
         st.page_link("pages/01_normal_problems.py", label="Challenge Arena", icon="⚔️")
         st.page_link(
-            "pages/03_aggregate_results.py", label="OVerall Progress", icon="📊"
+            "pages/03_aggregate_results.py", label="Overall Progress", icon="📊"
         )
 
 

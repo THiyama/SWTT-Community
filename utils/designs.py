@@ -144,3 +144,26 @@ def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM
         </p>
         """
     )
+
+@st.cache_data
+def background_image(image_file: str = '../../pages/common/images/sky.png'):
+    import base64
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    st.markdown(
+    f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+        background-image: url(data:image/{"png"};base64,{encoded_string});
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        color: #ffe4b5;
+    }}
+    .stApp > header {{
+        background-color: rgba(255,255,255,0.6);
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )

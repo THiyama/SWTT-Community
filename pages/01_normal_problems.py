@@ -12,12 +12,12 @@ from utils.utils import (
     get_session,
     get_team_id,
 )
-from utils.designs import apply_default_custom_css, display_applied_message
+from utils.designs import apply_default_custom_css, display_applied_message, background_image
 from utils.attempt_limiter import check_is_failed
 
 display_page_titles_sidebar()
 st.title("⚔️挑戦の場")
-
+background_image('pages/common/images/wars.png')
 
 team_id = get_team_id()
 css_name = apply_default_custom_css()
@@ -78,3 +78,4 @@ for i, tab_title in enumerate(problem_ids):
         except AttributeError as e:
             st.write("in develop...")
             print(e)
+

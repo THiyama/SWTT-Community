@@ -3,6 +3,7 @@ from snowflake.snowpark import Session
 from streamlit_image_select import image_select
 
 from utils.utils import save_table, init_state, clear_submit_button
+from utils.designs import header_animation, display_problem_statement
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
 
 MAX_ATTEMPTS_MAIN = 3
@@ -67,7 +68,11 @@ def get_name(data, button_id, show_hint=True):
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
-    st.write("Question 1: 一般提供(GA)された順番にクリックしろ！")
+    header_animation()
+    st.header("問題", divider="rainbow")
+
+    display_problem_statement("一般提供(GA)された順番にクリックしろ！")
+    st.divider()
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # データを取得する
@@ -91,7 +96,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
 
     # 画像を選択する
     img = image_select(
-        label="",
+        label="hogehoge",
         images=get_images(data, selected_list),
         captions=captions,
         use_container_width=False,

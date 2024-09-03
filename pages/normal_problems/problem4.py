@@ -2,6 +2,7 @@ import streamlit as st
 from snowflake.snowpark import Session
 
 from utils.utils import save_table, init_state, clear_submit_button
+from utils.designs import header_animation, display_problem_statement
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
 
 MAX_ATTEMPTS_MAIN = 2
@@ -18,7 +19,11 @@ def get_random_order():
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
-    st.write("Question 4: この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？")
+    header_animation()
+    st.header("問題", divider="rainbow")
+
+    display_problem_statement("この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？")
+    st.divider()
     st.image("pages/normal_problems/resources/problem4/squad.jpeg", use_column_width=True)
     st.write(f"回答回数の上限は {max_attempts}回です。")
 

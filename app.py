@@ -66,7 +66,7 @@ if "team_id" in st.session_state:
 else:
     index = 0
 
-team_id = st.selectbox(label="", options=TEAMS, index=index)
+team_id = st.selectbox(label="結成するチームを選択", options=TEAMS, index=index, label_visibility="hidden")
 
 
 if team_id:

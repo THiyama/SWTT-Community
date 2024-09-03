@@ -4,12 +4,16 @@ from snowflake.cortex import Sentiment, Translate
 
 from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
+from utils.designs import header_animation, display_problem_statement
 
 MAX_ATTEMPTS_MAIN = 3
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
-    st.write("Be Positive!")
+    header_animation()
+    st.header("Be Positive!", divider="rainbow")
+
+    display_problem_statement("ポジティブな気分で、邪気を取り払うのだ！")
     st.write(f"回答回数の上限は {max_attempts}回です。")
     answer = st.text_input(
         "ポジティブメッセージを入力してください:", key=f"{tab_name}_answer"

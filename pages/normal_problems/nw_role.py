@@ -355,7 +355,7 @@ def processing_correct_ans() -> None:
 
 
 def processing_incorrect_ans() -> None:
-    st.error("ハズレ！ 回答を削除して検証してみよう！！！")
+    st.error("ハズレ！ 選択した回答を削除して検証してみよう！！！！")
 
 
 def main():

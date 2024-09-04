@@ -10,33 +10,35 @@ from utils.designs import apply_default_custom_css, display_applied_message, bac
 
 display_page_titles_sidebar()
 
-TEAMS = [
-    "",
-    "Account Admin",
-    "Business Critical",
-    "Cortex",
-    "Data Clean Room",
-    "Enterprise Edtion",
-    "Fail Safe",
-    "Git",
-    "Horizon",
-    "Iceberg",
-    "JDBC",
-    "Knowledge",
-    "Lineage",
-    "Marketplace",
-    "Notebooks",
-    "OrgAdmin",
-    "POLARIS",
-    "Quality Monitoring",
-    "Resouce Monitor",
-    "Snowpark",
-    "Trust Center",
-    "Universal Search",
-    "Validate",
-    "WAREHOUSE",
-    "X-Small",
-]
+# Key: 表示されるチーム名
+# Value: secretsに記載されているチームID
+TEAMS = {
+    "": "",
+    "Account Admin": "Account_Admin",
+    "Business Critical": "BusinessCritical",
+    "Cortex": "Cortex",
+    "Data Clean Room": "DataCleanRoom",
+    "Enterprise Edition": "Enterprise_Edtion",
+    "Fail-Safe": "Fail_Safe",
+    "Git": "Git",
+    "Horizon": "Horizon",
+    "Iceberg": "Iceberg",
+    "JDBC": "JAROWINKLER_SIMILARITY",
+    "Knowledge": "Kafka",
+    "Lineage": "Lineage",
+    "Marketplace": "Marketplace",
+    "Notebooks": "Notebooks",
+    "OrgAdmin": "Org_Admin",
+    "POLARIS": "POLARIS",
+    "Quality Monitoring": "QualityMonitoring",
+    "Resouce Monitor": "ResouceMonitor",
+    "Snowpark": "Snowpark",
+    "Trust Center": "TrustCenter",
+    "Universal Search": "UniversalSearch",
+    "Validate": "VARCHAR",
+    "WAREHOUSE": "WAREHOUSE",
+    "X-Small": "XS",
+}
 
 
 st.title("💎データクリスタルの挑戦")
@@ -62,12 +64,12 @@ message = f"""
 
 display_applied_message(message, css_name)
 if "team_id" in st.session_state:
-    index = TEAMS.index(st.session_state.team_id)
+    index = list(TEAMS.keys()).index(st.session_state.team_id)
 else:
     index = 0
 
 team_id = st.selectbox(
-    label="結成するチームを選択", options=TEAMS, index=index, label_visibility="hidden"
+    label="結成するチームを選択", options=list(TEAMS.keys()), index=index, label_visibility="hidden"
 )
 
 
@@ -76,10 +78,7 @@ if team_id:
     placeholder = st.empty()
     if placeholder.button("挑戦を開始する"):
         st.switch_page("pages/01_normal_problems.py")
-    st.session_state.snow_session = create_session(team_id, placeholder)
+    st.session_state.snow_session = create_session(TEAMS[team_id], placeholder)
 
 
 background_image('pages/common/images/sky.png', dark_mode = False)
-
-
-

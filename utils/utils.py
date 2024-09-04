@@ -5,7 +5,7 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.attempt_limiter import check_is_failed, process_limit_success_error
+from utils.attempt_limiter import check_is_failed
 
 import hashlib
 
@@ -98,44 +98,45 @@ def save_table(state: dict, session: Session):
                 "max_attempts": state["max_attempts"],
             }
         ],
-        index=[0],
+        columns=[
+            "team_id",
+            "problem_id",
+            "timestamp",
+            "is_clear",
+            "key",
+            "max_attempts",
+        ],
     )
-    new_column_order = [
-        "team_id",
-        "problem_id",
-        "timestamp",
-        "is_clear",
-        "key",
-        "max_attempts",
-    ]
-    df = df[new_column_order]
 
     snow_df = session.create_dataframe(df)
+    snow_df.write.mode("append").save_as_table("submit2")
 
     if state["is_clear"]:
-        snow_df.write.mode("append").save_as_table("submit2")
-        if (
-            ":white_check_mark:"
-            not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
-        ):
+
+        # はじめてのクリアの場合、if文内のロジックを実行する。
+        if not st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
             st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
                 ":white_check_mark: "
                 + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
             )
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
+                True
+            )
 
     else:
-        snow_df.write.mode("append").save_as_table("submit2")
 
+        # 制限に到達している かつ クリアしていない 場合、if文内のロジックを実行する。
         if (
             check_is_failed(session, state)
-            and ":white_check_mark:"
-            not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
+            and not st.session_state[
+                f"{state['problem_id']}_{state['team_id']}_is_clear"
+            ]
         ):
             st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
                 ":x: "
                 + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
             )
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = (
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
                 True
             )
 
@@ -157,20 +158,21 @@ def check_is_clear(session: Session, state: dict):
 
 
 def clear_submit_button(placeholder, state):
-    if f"{state['problem_id']}_{state['team_id']}_disabled" not in st.session_state:
-        st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = False
-    elif st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"]:
+    if st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
         placeholder.empty()
-        process_limit_success_error(placeholder, state)
+        placeholder.success("そなたらはすでにクリスタルのパワーを取り戻している！")
+    elif st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"]:
+        placeholder.empty()
+        placeholder.error("そなたらはクリスタルのパワーを使い切ってしまったようだ。")
 
 
 def string_to_hash_int(base_string: str) -> int:
     # 文字列をUTF-8でエンコードし、SHA256ハッシュを計算
-    hash_object = hashlib.sha256(base_string.encode('utf-8'))
+    hash_object = hashlib.sha256(base_string.encode("utf-8"))
     hash_hex = hash_object.hexdigest()
-    
+
     # 16進数の文字列を整数に変換
     hash_int = int(hash_hex, 16)
-    
+
     # 整数値をシードとして返す
     return hash_int

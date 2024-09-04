@@ -64,7 +64,6 @@ def ai_problem(tab_name: str, max_attempts: int, session: Session) -> str:
     prompt = st.chat_input("What is up?")
 
     if prompt:
-        print(selected_model)
         st.session_state.messages.append({"role": "user", "content": prompt})
         with chat_container.chat_message("user"):
             st.markdown(prompt)

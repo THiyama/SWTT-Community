@@ -12,12 +12,16 @@ from utils.utils import (
     get_session,
     get_team_id,
 )
-from utils.designs import apply_default_custom_css, display_applied_message, background_image
+from utils.designs import (
+    apply_default_custom_css,
+    display_applied_message,
+    background_image,
+)
 from utils.attempt_limiter import check_is_failed
 
 display_page_titles_sidebar()
 st.title("⚔️挑戦の場")
-background_image('pages/common/images/wars.png')
+background_image("pages/common/images/wars.png")
 
 team_id = get_team_id()
 css_name = apply_default_custom_css()
@@ -53,10 +57,28 @@ for problem_id in tabs.keys():
     if f"{state['problem_id']}_{state['team_id']}_title" not in st.session_state:
         if check_is_clear(session, state):
             checker = ":white_check_mark: "
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
+                True
+            )
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
+                False
+            )
         elif check_is_failed(session, state):
             checker = ":x: "
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
+                False
+            )
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
+                True
+            )
         else:
             checker = ""
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
+                False
+            )
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
+                False
+            )
         st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
             checker + problem_id
         )
@@ -78,4 +100,3 @@ for i, tab_title in enumerate(problem_ids):
         except AttributeError as e:
             st.write("in develop...")
             print(e)
-

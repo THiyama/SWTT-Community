@@ -109,17 +109,12 @@ def check_is_failed(session, state):
         return False
 
 
-def process_limit_success_error(placeholder, state):
-    if (
-        ":white_check_mark:"
-        not in st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
-    ):
-        placeholder.error("そなたらはクリスタルのパワーを使い切ってしまったようだ。")
+def process_exceeded_limit(placeholder, state):
+    st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = True
+
+    # 回答制限に到達した際に、その回答がクリアだったかどうかで表示する内容を調整する。
+    if st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
+        placeholder.success("そなたらはクリスタルのパワーを取り戻すことができた！")
 
     else:
-        placeholder.success("そなたらはすでにクリスタルのパワーを取り戻している！")
-
-
-def process_exceeded_limit(placeholder, state):
-    st.session_state[f"{state['problem_id']}_{state['team_id']}_disabled"] = True
-    process_limit_success_error(placeholder, state)
+        placeholder.error("そなたらはクリスタルのパワーを使い切ってしまったようだ。")

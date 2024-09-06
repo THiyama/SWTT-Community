@@ -14,9 +14,11 @@ TAB_TITLES = {
     "be_positive": "Sentiment のど自慢🎤　",
     "problem4": "Community 魚すくい🐠　",
     "chat_with_ai": "Cortex 占い🔮　",
+    "real_ice": "Open かき氷🧊　",
     "rsp": "Unistore じゃんけん大会✋️　",
     "nw_role": "Governance わさびたこ焼き🐙　",
     "problem1": "Time Travel シューティング🔫　",
+    "real_wanage": "Query 輪投げ➰️　",
 }
 
 

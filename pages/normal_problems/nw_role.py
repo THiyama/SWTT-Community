@@ -3,90 +3,13 @@ import pandas as pd
 import re
 import time
 
-
-def header_animation(image_file: str = 'pages/common/images/sky.png') -> None:
-    import base64
-    with open(image_file, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode()
-    _animation_header = f"""
-    .ani_head {{
-    	position:relative;
-    	overflow:hidden;
-    	box-shadow:0 4px 20px rgba(0, 0, 0, 0.2);
-        background-image: url(data:image/{"png"};base64,{encoded_string});
-    	margin:0 auto;
-    	width:300px;
-    	height:30px;
-        margin: 0 calc(50% - 50vw);
-        width: 100vw;
-    }}
-    .ani_head::before,
-    .ani_head::after {{
-    	position:absolute;
-    	left:-50%;
-    	width:200%;
-    	height:200%;
-    	content:"";
-    	background-color:#1e50a2;
-    	animation:wave linear 6s infinite;
-    }}
-    .ani_head::before {{
-    	top:-150%;
-    	border-radius:50% 50% / 50% 70%;
-    }}
-    .ani_head::after {{
-    	top:-146%;
-    	border-radius:30% 70% / 30% 50%;
-    	opacity:0.2;
-    	animation-delay:0.4s;
-    }}
-    @keyframes wave {{
-    	from {{
-    		transform:rotate(0deg);
-    	}}
-    	to {{
-    		transform:rotate(360deg);
-    	}}
-    }}
-    """
-    st.markdown(
-        f"""<div class="ani_head"></div><style>{_animation_header}</style>""",
-        unsafe_allow_html=True,
-    )
+from utils.designs import header_animation, display_problem_statement
 
 
 def explaining_part(_showed_table: object) -> None:
 
-    _quetion_hover = f"""
-    .qhover {{
-      background-color: rgb(190, 205, 214);
-      padding: 30px;
-    }}
-    .qhover .box {{
-      border-radius: 10px;
-    }}
-    .qhover {{
-      background-color: rgb(240, 240, 250);
-      transition: box-shadow 0.5s;
-      color: #696969;
-      box-shadow:
-        10px 10px 30px transparent,
-        -10px -10px 30px transparent,
-        inset 10px 10px 30px rgba(18, 47, 61, 0.5),
-        inset -10px -10px 30px rgba(248, 253, 255, 0.9);
-
-    }}
-    .qhover:hover {{
-      color: #a0522d;
-      box-shadow:
-        10px 10px 30px rgba(18, 47, 61, 0.5),
-        -10px -10px 30px rgba(248, 253, 255, 0.9),
-        inset 10px 10px 30px transparent,
-        inset -10px -10px 30px transparent;
-    }}
-    """
-    st.markdown(
-        f"""<p><div class="qhover">
+    display_problem_statement(
+        """
         雪の結晶株式会社は、自社提供のサービスの一般利用者の情報をデータベースに保存しています.<br>
         所属部門/権限(Role)によって、閲覧できるユーザ情報は厳しく制限されています.<br>
         <br>
@@ -94,8 +17,7 @@ def explaining_part(_showed_table: object) -> None:
         <br>
         さて、どの部署所属であれば<br>
         「サービスの本会員」かつ「データ利用の許諾済み」の一般利用者の人数を確認することができるでしょうか？
-        </div><style>{_quetion_hover}</style></p>""",
-        unsafe_allow_html=True,
+        """
     )
     st.divider()
 
@@ -411,7 +333,7 @@ def main():
     }
 
     header_animation()
-    st.header("問題", divider="rainbow")
+    st.header("クリスタルのガバナンスの結界を強固に", divider="rainbow")
     explaining_part(_showed_table=table)
 
     st.header("回答", divider="blue")

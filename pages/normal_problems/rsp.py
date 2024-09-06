@@ -1,11 +1,10 @@
 import streamlit as st
 from snowflake.snowpark import Session
-from snowflake.snowpark.functions import col, desc, count, min
-from snowflake.snowpark.window import Window
-import pandas as pd
-import datetime
+from snowflake.snowpark.functions import col, count, min
+
 from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
+from utils.designs import header_animation, display_problem_statement
 
 MAX_ATTEMPTS_MAIN = 1
 
@@ -33,9 +32,11 @@ def add_new_command(session, team_id, hand):
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
-    st.write(
-        "Question 少数決：現時点で最も投票が少ない選択肢を予測して投票してください"
-    )
+    header_animation()
+    st.header("応援！", divider="rainbow")
+
+    display_problem_statement("現時点で最も投票が少ない選択肢を予測して投票するのだ！")
+
     st.write(f"投票回数の上限は {max_attempts}回です。")
     st.markdown("### 選択肢")
     options = ["DATA FOUNDATION", "AI", "APP"]

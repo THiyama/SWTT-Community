@@ -42,6 +42,8 @@ for problem_id in problem_ids:
     if f"{problem_id}_is_over_clear" not in st.session_state:
         st.session_state[f"{problem_id}_is_over_clear"] = False
 
+chart_placeholder = st.empty()
+
 
 @st.fragment(run_every="10s")
 def update_chart():
@@ -61,12 +63,33 @@ def update_chart():
 
     result["IS_CLEAR"] = result["IS_CLEAR"].fillna(0)
 
+    result["color"] = "#29B5E8"  # デフォルトカラー（薄いSnowflake色）
+
+    # 雪を降らせる処理
+    for index, row in result.iterrows():
+        if row["IS_CLEAR"] >= CLEAR_COUNT:
+            result.at[index, "color"] = "#11567F"  # 色を濃い青色に変更
+
+            # クリアカウントを超えた場合の通知の表示と雪を降らせる処理
+            if not st.session_state[f"{row['problem_id']}_is_over_clear"]:
+                st.success(f"「{row['problem_name'][:-1]}」の的屋が解放されたようだ！")
+                st.snow()
+                st.session_state[f"{row['problem_id']}_is_over_clear"] = True
+
     fig = px.bar(
         result,
         x="problem_name",
         y="IS_CLEAR",
-        color_discrete_sequence=["#29B5E8"],
+        color="color",
+        color_discrete_map="identity",
         labels={"problem_name": "", "IS_CLEAR": "正解チーム数"},
+    )
+
+    fig.update_layout(
+        xaxis_range=[-0.5, 7.5],
+        yaxis_range=[0, 25],
+        plot_bgcolor="rgba(30, 30, 30, 0.7)",
+        paper_bgcolor="rgba(10, 10, 10, 0.5)",
     )
 
     fig.add_shape(
@@ -78,19 +101,7 @@ def update_chart():
         line=dict(color="#ff4b4b", width=3),
     )
 
-    fig.update_layout(xaxis_range=[-0.5, 7.5], yaxis_range=[0, 25])
-
-    chart_placeholder = st.empty()
     chart_placeholder.plotly_chart(fig, use_container_width=True)
-
-    # 雪を降らせる処理
-    for _, row in result.iterrows():
-        if (
-            row["IS_CLEAR"] >= CLEAR_COUNT
-            and not st.session_state[f"{row['problem_id']}_is_over_clear"]
-        ):
-            st.snow()
-            st.session_state[f"{row['problem_id']}_is_over_clear"] = True
 
 
 update_chart()

@@ -34,7 +34,15 @@ session = get_session()
 
 
 session = st.session_state.snow_session
-problem_ids = st.session_state.problem_ids
+
+try:
+    problem_ids = st.session_state.problem_ids
+except AttributeError as e:
+    st.warning("一度挑戦の場を訪れるが良い。")
+    if st.button("挑戦の場に行く"):
+        st.switch_page("pages/01_normal_problems.py")
+    st.stop()
+
 pdf_problem_ids = pd.DataFrame(problem_ids, columns=["problem_id"])
 pdf_problem_ids["problem_name"] = pdf_problem_ids["problem_id"].map(TAB_TITLES)
 

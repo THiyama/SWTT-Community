@@ -34,6 +34,11 @@ def apply_default_custom_css():
         + """ strong {
             color: #5cc5eb;  /* 強調部分も淡いSnowflake色に */
         }
+        ."""
+        + DEFAULT_TOP_TEXT_AREA
+        + """ p:last-child {
+            margin-bottom: 0;
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -159,7 +164,7 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
         dark_mode_css = """
             .main::before {
                 background-color: rgba(0,0,0,0.4);
-                position: absolute;
+                position: fixed;
                 top: 0;
                 right: 0;
                 bottom: 0;
@@ -179,7 +184,14 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
     }}
     {dark_mode_css}
     .stApp > header {{
-        background-color: rgba(255,255,255,0.6);
+        display: none;
+    }}
+    .stAlert{{
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 0.5rem;
+    }}
+    .stAlert p, .stTabs button p{{
+        color: #fff !important;
     }}
     </style>
     """,

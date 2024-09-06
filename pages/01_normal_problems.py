@@ -2,13 +2,10 @@ import streamlit as st
 import os
 import importlib
 
-from snowflake.snowpark import Session
-
 from utils.utils import (
     check_is_clear,
     display_page_titles_sidebar,
     display_team_id_sidebar,
-    display_team_id,
     get_session,
     get_team_id,
 )
@@ -18,6 +15,16 @@ from utils.designs import (
     background_image,
 )
 from utils.attempt_limiter import check_is_failed
+
+
+TAB_TITLES = {
+    "be_positive": "Sentiment のど自慢🎤　",
+    "problem4": "Community 魚すくい🐠　",
+    "chat_with_ai": "Cortex 占い🔮　",
+    "rsp": "Unistore じゃんけん大会✋️　",
+    "nw_role": "Governance わさびたこ焼き🐙　",
+    "problem1": "Time Travel シューティング🔫　",
+}
 
 display_page_titles_sidebar()
 st.title("⚔️挑戦の場")
@@ -54,7 +61,11 @@ state = {}
 state["team_id"] = session.get_current_user()[1:-1]
 for problem_id in tabs.keys():
     state["problem_id"] = problem_id
+
+    # タブ名、タブステートの初期化
     if f"{state['problem_id']}_{state['team_id']}_title" not in st.session_state:
+
+        # クリアフラグを追加するIFステートメント
         if check_is_clear(session, state):
             checker = ":white_check_mark: "
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
@@ -79,10 +90,17 @@ for problem_id in tabs.keys():
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
                 False
             )
-        st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-            checker + problem_id
-        )
 
+        # タブタイトル（物理名）にフラグを追加する処理
+        try:
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+                checker + TAB_TITLES[problem_id]
+            )
+        except KeyError as e:
+            # TAB_TITLESにない問題はスキップする。
+            continue
+
+    # タブタイトル（物理名）の追加
     tab_titles.append(
         st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
     )
@@ -94,9 +112,4 @@ selected_tab = st.tabs(tab_titles)
 
 for i, tab_title in enumerate(problem_ids):
     with selected_tab[i]:
-        try:
-            tabs[tab_title].run(tab_title, session)
-
-        except AttributeError as e:
-            st.write("in develop...")
-            print(e)
+        tabs[tab_title].run(tab_title, session)

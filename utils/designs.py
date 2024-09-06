@@ -181,6 +181,13 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
     .stApp > header {{
         display: none;
     }}
+    .stAlert{{
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 0.5rem;
+    }}
+    .stAlert p, .stTabs button p{{
+        color: #fff !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True

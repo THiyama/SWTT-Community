@@ -179,7 +179,7 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
     }}
     {dark_mode_css}
     .stApp > header {{
-        background-color: rgba(255,255,255,0.6);
+        display: none;
     }}
     </style>
     """,

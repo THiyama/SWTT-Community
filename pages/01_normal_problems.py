@@ -8,6 +8,7 @@ from utils.utils import (
     display_team_id_sidebar,
     get_session,
     get_team_id,
+    TAB_TITLES,
 )
 from utils.designs import (
     apply_default_custom_css,
@@ -16,15 +17,6 @@ from utils.designs import (
 )
 from utils.attempt_limiter import check_is_failed
 
-
-TAB_TITLES = {
-    "be_positive": "Sentiment のど自慢🎤　",
-    "problem4": "Community 魚すくい🐠　",
-    "chat_with_ai": "Cortex 占い🔮　",
-    "rsp": "Unistore じゃんけん大会✋️　",
-    "nw_role": "Governance わさびたこ焼き🐙　",
-    "problem1": "Time Travel シューティング🔫　",
-}
 
 display_page_titles_sidebar()
 st.title("⚔️挑戦の場")

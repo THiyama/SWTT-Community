@@ -10,6 +10,16 @@ from utils.attempt_limiter import check_is_failed
 import hashlib
 
 
+TAB_TITLES = {
+    "be_positive": "Sentiment のど自慢🎤　",
+    "problem4": "Community 魚すくい🐠　",
+    "chat_with_ai": "Cortex 占い🔮　",
+    "rsp": "Unistore じゃんけん大会✋️　",
+    "nw_role": "Governance わさびたこ焼き🐙　",
+    "problem1": "Time Travel シューティング🔫　",
+}
+
+
 @st.cache_resource
 def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
     try:

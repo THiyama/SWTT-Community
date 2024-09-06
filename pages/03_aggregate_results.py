@@ -2,18 +2,25 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 import snowflake.snowpark.functions as F
-from snowflake.snowpark import Session
 
 from utils.utils import (
     display_team_id_sidebar,
     display_page_titles_sidebar,
     get_session,
     get_team_id,
+    TAB_TITLES,
 )
-from utils.designs import apply_default_custom_css, display_applied_message, background_image
+from utils.designs import (
+    apply_default_custom_css,
+    display_applied_message,
+    background_image,
+)
+
+
+CLEAR_COUNT = 12
 
 st.title("📊挑戦状況")
-background_image('pages/common/images/library.png')
+background_image("pages/common/images/library.png")
 display_page_titles_sidebar()
 display_team_id_sidebar()
 get_team_id()
@@ -21,6 +28,7 @@ get_team_id()
 css_name = apply_default_custom_css()
 message = "ここでは、現在の各チームの挑戦状況を確認できるぞ。\n\nそなたらもどんどん挑戦して進むのだ！"
 display_applied_message(message, css_name)
+st.write("")
 
 session = get_session()
 
@@ -28,6 +36,11 @@ session = get_session()
 session = st.session_state.snow_session
 problem_ids = st.session_state.problem_ids
 pdf_problem_ids = pd.DataFrame(problem_ids, columns=["problem_id"])
+pdf_problem_ids["problem_name"] = pdf_problem_ids["problem_id"].map(TAB_TITLES)
+
+for problem_id in problem_ids:
+    if f"{problem_id}_is_over_clear" not in st.session_state:
+        st.session_state[f"{problem_id}_is_over_clear"] = False
 
 
 @st.fragment(run_every="10s")
@@ -48,11 +61,36 @@ def update_chart():
 
     result["IS_CLEAR"] = result["IS_CLEAR"].fillna(0)
 
-    fig = px.bar(result, x="problem_id", y="IS_CLEAR")
-    fig.update_layout(yaxis_range=[0, 30])
-    st.plotly_chart(fig, use_container_width=True)
+    fig = px.bar(
+        result,
+        x="problem_name",
+        y="IS_CLEAR",
+        color_discrete_sequence=["#29B5E8"],
+        labels={"problem_name": "", "IS_CLEAR": "正解チーム数"},
+    )
 
-    st.dataframe(result)
+    fig.add_shape(
+        type="line",
+        x0=-0.5,
+        x1=7.5,
+        y0=CLEAR_COUNT,
+        y1=CLEAR_COUNT,
+        line=dict(color="#ff4b4b", width=3),
+    )
+
+    fig.update_layout(xaxis_range=[-0.5, 7.5], yaxis_range=[0, 25])
+
+    chart_placeholder = st.empty()
+    chart_placeholder.plotly_chart(fig, use_container_width=True)
+
+    # 雪を降らせる処理
+    for _, row in result.iterrows():
+        if (
+            row["IS_CLEAR"] >= CLEAR_COUNT
+            and not st.session_state[f"{row['problem_id']}_is_over_clear"]
+        ):
+            st.snow()
+            st.session_state[f"{row['problem_id']}_is_over_clear"] = True
 
 
 update_chart()

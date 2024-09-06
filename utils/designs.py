@@ -159,7 +159,7 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
         dark_mode_css = """
             .main::before {
                 background-color: rgba(0,0,0,0.4);
-                position: absolute;
+                position: fixed;
                 top: 0;
                 right: 0;
                 bottom: 0;

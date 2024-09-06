@@ -3,12 +3,17 @@ from snowflake.snowpark import Session
 
 from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
+from utils.designs import header_animation, display_problem_statement
 
 MAX_ATTEMPTS_MAIN = 3
 
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
-    st.write("輪投げエリアの課題をクリアし呪文を入手するのだ！")
+    header_animation()
+    st.header("リアル課題", divider="rainbow")
+
+    display_problem_statement("輪投げエリアの課題をクリアし呪文を入手するのだ！")
+
     st.write(f"回答回数の上限は {max_attempts}回です。")
     answer = st.text_input("Your answer:", key=f"{tab_name}_answer")
 

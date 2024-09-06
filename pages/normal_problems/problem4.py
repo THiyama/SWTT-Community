@@ -11,7 +11,12 @@ MAX_ATTEMPTS_MAIN = 2
 
 # 問題用のデータセット
 PROGRAM_LIST = ["Data Superheroes", "DATA Saber", "Snowflake Squad", "Data Polaris"]
-PROGRAM_LOGOS = ["pages/normal_problems/resources/problem4/logo_data_superheroes.png", "pages/normal_problems/resources/problem4/logo_data_saber.png", "pages/normal_problems/resources/problem4/logo_snowflake_squad.png", "pages/normal_problems/resources/problem4/logo_data_polaris_fake.png"]
+PROGRAM_LOGOS = [
+    "pages/normal_problems/resources/problem4/logo_data_superheroes.png",
+    "pages/normal_problems/resources/problem4/logo_data_saber.png",
+    "pages/normal_problems/resources/problem4/logo_snowflake_squad.png",
+    "pages/normal_problems/resources/problem4/logo_data_polaris_fake.png",
+]
 
 
 # ランダムな並び順を取得する
@@ -27,11 +32,15 @@ def get_random_order(team_id: str) -> list:
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
-    st.header("問題", divider="rainbow")
+    st.header("ヒーローを味方に", divider="rainbow")
 
-    display_problem_statement("この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？")
+    display_problem_statement(
+        "この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？"
+    )
     st.divider()
-    st.image("pages/normal_problems/resources/problem4/squad.jpeg", use_column_width=True)
+    st.image(
+        "pages/normal_problems/resources/problem4/squad.jpeg", use_column_width=True
+    )
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # 選択肢をシャッフルする

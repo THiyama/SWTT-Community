@@ -24,14 +24,50 @@ PREVENT_IMAGE_CHANGE = True
 # 問題用のデータセットを定義する
 @st.cache_data
 def get_data(team_id):
-    common_item = ["button0", "", "", "pages/normal_problems/resources/problem1/none.png", "pages/normal_problems/resources/problem1/button1.none.png"]
+    common_item = [
+        "button0",
+        "",
+        "",
+        "pages/normal_problems/resources/problem1/none.png",
+        "pages/normal_problems/resources/problem1/button1.none.png",
+    ]
 
     base_list = [
-        ["button1", "Data Sharing",           "1", "pages/normal_problems/resources/problem1/button1.png", "pages/normal_problems/resources/problem1/button1.inactive.png"],
-        ["button2", "Snowpark",               "2", "pages/normal_problems/resources/problem1/button2.png", "pages/normal_problems/resources/problem1/button2.inactive.png"],
-        ["button3", "Streamlit in Snowflake", "3", "pages/normal_problems/resources/problem1/button3.png", "pages/normal_problems/resources/problem1/button3.inactive.png"],
-        ["button4", "Dynamic Tables",         "4", "pages/normal_problems/resources/problem1/button4.png", "pages/normal_problems/resources/problem1/button4.inactive.png"],
-        ["button5", "Native Apps Framework",  "5", "pages/normal_problems/resources/problem1/button5.png", "pages/normal_problems/resources/problem1/button5.inactive.png"],
+        [
+            "button1",
+            "Data Sharing",
+            "1",
+            "pages/normal_problems/resources/problem1/button1.png",
+            "pages/normal_problems/resources/problem1/button1.inactive.png",
+        ],
+        [
+            "button2",
+            "Snowpark",
+            "2",
+            "pages/normal_problems/resources/problem1/button2.png",
+            "pages/normal_problems/resources/problem1/button2.inactive.png",
+        ],
+        [
+            "button3",
+            "Streamlit in Snowflake",
+            "3",
+            "pages/normal_problems/resources/problem1/button3.png",
+            "pages/normal_problems/resources/problem1/button3.inactive.png",
+        ],
+        [
+            "button4",
+            "Dynamic Tables",
+            "4",
+            "pages/normal_problems/resources/problem1/button4.png",
+            "pages/normal_problems/resources/problem1/button4.inactive.png",
+        ],
+        [
+            "button5",
+            "Native Apps Framework",
+            "5",
+            "pages/normal_problems/resources/problem1/button5.png",
+            "pages/normal_problems/resources/problem1/button5.inactive.png",
+        ],
     ]
 
     # デザイン上、削除した選択肢
@@ -92,7 +128,7 @@ def get_name(data, button_id, show_hint=True):
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
-    st.header("問題", divider="rainbow")
+    st.header("クリスタルの記憶を呼び起こせ", divider="rainbow")
 
     display_problem_statement("一般提供(GA)された順番にクリックしろ！")
     st.divider()
@@ -187,7 +223,9 @@ def run(tab_name: str, session: Session):
     placeholder = st.empty()
     if check_is_failed(session, state):
         process_exceeded_limit(placeholder, state)
-    elif placeholder.button("submit", key=f"{tab_name}_submit", disabled=button_disabled):
+    elif placeholder.button(
+        "submit", key=f"{tab_name}_submit", disabled=button_disabled
+    ):
         if main_attempt.check_attempt():
             if answer:
                 process_answer(answer, state, session)  # ★

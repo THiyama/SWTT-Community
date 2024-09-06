@@ -1,9 +1,10 @@
-from datetime import datetime
 import streamlit as st
 from snowflake.snowpark import Session
+from snowflake.cortex import Complete as CompleteText
+
 from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
-from snowflake.cortex import Complete as CompleteText
+from utils.designs import header_animation, display_problem_statement
 
 
 class ABCConverter:
@@ -37,9 +38,13 @@ def display_chat_history():
 
 
 def ai_problem(tab_name: str, max_attempts: int, session: Session) -> str:
-    st.write(
-        "Question Cortex AI：3つのモデルと会話してその中からSnowflake Arcticだと思うものを選んで回答してください"
+    header_animation()
+    st.header("Snowflake Arctic との邂逅", divider="rainbow")
+
+    display_problem_statement(
+        "3つのモデルと会話してその中から Snowflake Arctic だと思うものを選んで回答するのだ！"
     )
+
     initialize_chat_history()
     converter = ABCConverter()
     abc_options = list(converter.abc_to_answer.keys())

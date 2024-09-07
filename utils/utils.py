@@ -167,9 +167,6 @@ def save_table(state: dict, session: Session):
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
                 True
             )
-
-            reset_problem_status()
-
     else:
         update_failed_status(session, state)
         # 制限に到達している かつ クリアしていない 場合、if文内のロジックを実行する。
@@ -186,8 +183,6 @@ def save_table(state: dict, session: Session):
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
                 True
             )
-
-            reset_problem_status()
 
 
 def update_clear_status(session: Session, state: dict) -> None:
@@ -218,9 +213,10 @@ def reset_problem_status() -> None:
     team_id = TEAMS[get_team_id()]
 
     for problem_id in st.session_state["problem_ids"]:
+        # if f"{problem_id}_{team_id}_title" in st.session_state:
         del st.session_state[f"{problem_id}_{team_id}_title"]
 
-    st.session_state.display_preparation_message = True
+    st.session_state[f"{team_id}_display_preparation_message"] = True
 
 
 def clear_submit_button(placeholder, state):

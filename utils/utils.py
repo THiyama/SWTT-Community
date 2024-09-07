@@ -142,12 +142,12 @@ def save_table(state: dict, session: Session):
             }
         ],
         columns=[
-            "TEAM_ID",
-            "PROBLEM_ID",
-            "TIMESTAMP",
-            "IS_CLEAR",
-            "KEY",
-            "MAX_ATTEMPTS",
+            "team_id",
+            "problem_id",
+            "timestamp",
+            "is_clear",
+            "key",
+            "max_attempts",
         ],
     )
 

@@ -139,7 +139,7 @@ def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM
                 background-image: url(data:image/{"png"};base64,{encoded_string});
                 background-position: top;
                 padding: 40px 5%;
-                color: #000
+                color: #9e1717;
             }}
             </style>
         </p>

@@ -1,9 +1,13 @@
+# from streamlit_profiler import Profiler
+
 import streamlit as st
 import os
 import importlib
 
 from utils.utils import (
     check_is_clear,
+    update_clear_status,
+    reset_problem_status,
     display_page_titles_sidebar,
     display_team_id_sidebar,
     get_session,
@@ -15,10 +19,15 @@ from utils.designs import (
     display_applied_message,
     background_image,
 )
-from utils.attempt_limiter import check_is_failed
+from utils.attempt_limiter import check_is_failed, update_failed_status
 
+# with Profiler():  # 性能調査をする場合はコメントアウトを外して下記コードをすべてインデント下げる。
+
+if "display_preparation_message" not in st.session_state:
+    st.session_state.display_preparation_message = True
 
 display_page_titles_sidebar()
+
 st.title("⚔️挑戦の場")
 background_image("pages/common/images/wars.png")
 
@@ -32,10 +41,10 @@ message = f"""
 display_applied_message(message, css_name)
 
 st.write("")
+status_message_area = st.empty()
 
 session = get_session()
 display_team_id_sidebar()
-
 
 problems_dir = "pages/normal_problems"
 problem_files = [f for f in os.listdir(problems_dir) if f.endswith(".py")]
@@ -46,13 +55,33 @@ for file in problem_files:
     module_path = f"pages.normal_problems.{module_name}"
     tabs[module_name] = importlib.import_module(module_path)
 
-
 tab_titles = []
 problem_ids = []
 state = {}
 state["team_id"] = session.get_current_user()[1:-1]
-for problem_id in tabs.keys():
+
+progress_text = "Loading..."
+progress_bar = st.progress(value=0, text=progress_text)
+total_steps = len(tabs.keys())
+
+for i, problem_id in enumerate(tabs.keys()):
+    progress_bar.progress(int((i + 1) / total_steps * 100), progress_text)
     state["problem_id"] = problem_id
+
+    # タブタイトルの定義にない問題はスキップする
+    if problem_id not in TAB_TITLES:
+        continue
+
+    #
+    if (
+        f"{state['problem_id']}_{state['team_id']}_is_init_updated"
+        not in st.session_state
+    ):
+        st.session_state[
+            f"{state['problem_id']}_{state['team_id']}_is_init_updated"
+        ] = True
+        update_clear_status(session, state)
+        update_failed_status(session, state)
 
     # タブ名、タブステートの初期化
     if f"{state['problem_id']}_{state['team_id']}_title" not in st.session_state:
@@ -84,13 +113,9 @@ for problem_id in tabs.keys():
             )
 
         # タブタイトル（物理名）にフラグを追加する処理
-        try:
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-                checker + TAB_TITLES[problem_id]
-            )
-        except KeyError as e:
-            # TAB_TITLESにない問題はスキップする。
-            continue
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+            checker + TAB_TITLES[problem_id]
+        )
 
     # タブタイトル（物理名）の追加
     tab_titles.append(
@@ -104,4 +129,20 @@ selected_tab = st.tabs(tab_titles)
 
 for i, tab_title in enumerate(problem_ids):
     with selected_tab[i]:
+        st.button(
+            "クリスタルの復活状況を更新する",
+            key=f"{tab_title}_update",
+            on_click=reset_problem_status,
+        )
         tabs[tab_title].run(tab_title, session)
+
+progress_bar.empty()
+
+if st.session_state.display_preparation_message:
+    status_message_area.success("挑戦する準備が整ったようだ。")
+    import time
+
+    time.sleep(7)
+    status_message_area.empty()
+
+    st.session_state.display_preparation_message = False

@@ -51,6 +51,7 @@ for problem_id in problem_ids:
         st.session_state[f"{problem_id}_is_over_clear"] = False
 
 chart_placeholder = st.empty()
+st.write("\n\n\n")
 
 
 @st.fragment(run_every="10s")
@@ -76,7 +77,7 @@ def update_chart():
     # 雪を降らせる処理
     for index, row in result.iterrows():
         if row["IS_CLEAR"] >= CLEAR_COUNT:
-            result.at[index, "color"] = "#11567F"  # 色を濃い青色に変更
+            result.at[index, "color"] = "#c2e5f2"  # 色を薄い青色に変更
 
             # クリアカウントを超えた場合の通知の表示と雪を降らせる処理
             if not st.session_state[f"{row['problem_id']}_is_over_clear"]:

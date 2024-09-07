@@ -5,40 +5,16 @@ from utils.utils import (
     create_session,
     display_team_id_sidebar,
     display_page_titles_sidebar,
+    TEAMS,
 )
-from utils.designs import apply_default_custom_css, display_applied_message, background_image
+from utils.designs import (
+    apply_default_custom_css,
+    display_applied_message,
+    background_image,
+)
+
 
 display_page_titles_sidebar()
-
-# Key: 表示されるチーム名
-# Value: secretsに記載されているチームID
-TEAMS = {
-    "": "",
-    "Account Admin": "Account_Admin",
-    "Business Critical": "BusinessCritical",
-    "Cortex": "Cortex",
-    "Data Clean Room": "DataCleanRoom",
-    "Enterprise Edition": "Enterprise_Edtion",
-    "Fail-Safe": "Fail_Safe",
-    "Git": "Git",
-    "Horizon": "Horizon",
-    "Iceberg": "Iceberg",
-    "JDBC": "JAROWINKLER_SIMILARITY",
-    "Knowledge": "Kafka",
-    "Lineage": "Lineage",
-    "Marketplace": "Marketplace",
-    "Notebooks": "Notebooks",
-    "OrgAdmin": "Org_Admin",
-    "POLARIS": "POLARIS",
-    "Quality Monitoring": "QualityMonitoring",
-    "Resouce Monitor": "ResouceMonitor",
-    "Snowpark": "Snowpark",
-    "Trust Center": "TrustCenter",
-    "Universal Search": "UniversalSearch",
-    "Validate": "VARCHAR",
-    "WAREHOUSE": "WAREHOUSE",
-    "X-Small": "XS",
-}
 
 
 st.title("💎データクリスタルの挑戦")
@@ -69,9 +45,11 @@ else:
     index = 0
 
 team_id = st.selectbox(
-    label="結成するチームを選択", options=list(TEAMS.keys()), index=index, label_visibility="hidden"
+    label="結成するチームを選択",
+    options=list(TEAMS.keys()),
+    index=index,
+    label_visibility="hidden",
 )
-
 
 if team_id:
     st.session_state.team_id = team_id
@@ -80,5 +58,4 @@ if team_id:
         st.switch_page("pages/01_normal_problems.py")
     st.session_state.snow_session = create_session(TEAMS[team_id], placeholder)
 
-
-background_image('pages/common/images/sky.png', dark_mode = False)
+background_image("pages/common/images/sky.png", dark_mode=False)

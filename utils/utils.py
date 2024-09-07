@@ -5,7 +5,7 @@ import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
 
-from utils.attempt_limiter import check_is_failed
+from utils.attempt_limiter import check_is_failed, update_failed_status
 
 import hashlib
 
@@ -19,6 +19,37 @@ TAB_TITLES = {
     "nw_role": "Governance わさびたこ焼き🐙　",
     "problem1": "Time Travel シューティング🔫　",
     "real_wanage": "Query 輪投げ➰️　",
+}
+
+
+# Key: 表示されるチーム名
+# Value: secretsに記載されているチームID
+TEAMS = {
+    "": "",
+    "Account Admin": "Account_Admin",
+    "Business Critical": "BusinessCritical",
+    "Cortex": "Cortex",
+    "Data Clean Room": "DataCleanRoom",
+    "Enterprise Edition": "Enterprise_Edtion",
+    "Fail-Safe": "Fail_Safe",
+    "Git": "Git",
+    "Horizon": "Horizon",
+    "Iceberg": "Iceberg",
+    "JDBC": "JAROWINKLER_SIMILARITY",
+    "Knowledge": "Kafka",
+    "Lineage": "Lineage",
+    "Marketplace": "Marketplace",
+    "Notebooks": "Notebooks",
+    "OrgAdmin": "Org_Admin",
+    "POLARIS": "POLARIS",
+    "Quality Monitoring": "QualityMonitoring",
+    "Resouce Monitor": "ResouceMonitor",
+    "Snowpark": "Snowpark",
+    "Trust Center": "TrustCenter",
+    "Universal Search": "UniversalSearch",
+    "Validate": "VARCHAR",
+    "WAREHOUSE": "WAREHOUSE",
+    "X-Small": "XS",
 }
 
 
@@ -111,19 +142,21 @@ def save_table(state: dict, session: Session):
             }
         ],
         columns=[
-            "team_id",
-            "problem_id",
-            "timestamp",
-            "is_clear",
-            "key",
-            "max_attempts",
+            "TEAM_ID",
+            "PROBLEM_ID",
+            "TIMESTAMP",
+            "IS_CLEAR",
+            "KEY",
+            "MAX_ATTEMPTS",
         ],
     )
 
-    snow_df = session.create_dataframe(df)
-    snow_df.write.mode("append").save_as_table("submit2")
+    session.write_pandas(df, "SUBMIT2", auto_create_table=False, overwrite=False)
+    # snow_df = session.create_dataframe(df)
+    # snow_df.write.mode("append").save_as_table("submit2")
 
     if state["is_clear"]:
+        update_clear_status(session, state)
 
         # はじめてのクリアの場合、if文内のロジックを実行する。
         if not st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
@@ -135,8 +168,10 @@ def save_table(state: dict, session: Session):
                 True
             )
 
-    else:
+            reset_problem_status()
 
+    else:
+        update_failed_status(session, state)
         # 制限に到達している かつ クリアしていない 場合、if文内のロジックを実行する。
         if (
             check_is_failed(session, state)
@@ -152,8 +187,10 @@ def save_table(state: dict, session: Session):
                 True
             )
 
+            reset_problem_status()
 
-def check_is_clear(session: Session, state: dict):
+
+def update_clear_status(session: Session, state: dict) -> None:
     submit_table = session.table("submit2")
 
     try:
@@ -162,11 +199,28 @@ def check_is_clear(session: Session, state: dict):
             & (F.col("problem_id") == state["problem_id"])
             & (F.col("is_clear") == True)
         ).count()
-        return result > 0
+
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
+            result > 0
+        )
 
     except IndexError as e:
         print(e)
-        return False
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = False
+
+
+def check_is_clear(session: Session, state: dict):
+    # 呼び出し側が session 引数を入力しているため、一旦この関数では使っていないが定義する。
+    return st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]
+
+
+def reset_problem_status() -> None:
+    team_id = TEAMS[get_team_id()]
+
+    for problem_id in st.session_state["problem_ids"]:
+        del st.session_state[f"{problem_id}_{team_id}_title"]
+
+    st.session_state.display_preparation_message = True
 
 
 def clear_submit_button(placeholder, state):

@@ -30,6 +30,18 @@ def get_random_order(team_id: str) -> list:
     return order
 
 
+@st.cache_data
+def display_squad_image():
+    st.image(
+        "pages/normal_problems/resources/problem4/squad.jpeg", use_column_width=True
+    )
+
+
+@st.cache_data
+def display_logo_image(path: str):
+    st.image(path, use_column_width=True)
+
+
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("ヒーローを味方に", divider="rainbow")
@@ -38,9 +50,8 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
         "この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？"
     )
     st.divider()
-    st.image(
-        "pages/normal_problems/resources/problem4/squad.jpeg", use_column_width=True
-    )
+    display_squad_image()
+
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # 選択肢をシャッフルする
@@ -52,7 +63,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     if answer:
         for i in range(4):
             if answer == PROGRAM_LIST[i]:
-                st.image(PROGRAM_LOGOS[i], use_column_width=True)
+                display_logo_image(PROGRAM_LOGOS[i])
 
     return answer
 

@@ -83,7 +83,7 @@ def init_attempt(
     return AttemptLimiter(max_attempts, problem_id, team_id, session, key)
 
 
-def check_is_failed(session, state):
+def update_failed_status(session: Session, state: dict) -> None:
     attempt_table = session.table("submit2")
 
     try:
@@ -100,13 +100,22 @@ def check_is_failed(session, state):
         if query_result:
             max_attempts = query_result[0]["MAX_ATTEMPTS"]
             current_attempts = len(query_result)
-            return current_attempts >= max_attempts
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
+                current_attempts >= max_attempts
+            )
         else:
-            return False
+            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
+                False
+            )
 
     except IndexError as e:
         print(e)
-        return False
+        st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = False
+
+
+def check_is_failed(session: Session, state: dict) -> None:
+    # 呼び出し側が session 引数を入力しているため、一旦この関数では使っていないが定義する。
+    return st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"]
 
 
 def process_exceeded_limit(placeholder, state):

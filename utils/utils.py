@@ -151,9 +151,9 @@ def save_table(state: dict, session: Session):
         ],
     )
 
-    session.write_pandas(df, "SUBMIT2", auto_create_table=False, overwrite=False)
-    # snow_df = session.create_dataframe(df)
-    # snow_df.write.mode("append").save_as_table("submit2")
+    # session.write_pandas(df, "SUBMIT2", auto_create_table=False, overwrite=False)
+    snow_df = session.create_dataframe(df)
+    snow_df.write.mode("append").save_as_table("submit2")
 
     if state["is_clear"]:
         update_clear_status(session, state)

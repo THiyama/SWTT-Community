@@ -9,7 +9,13 @@ DEFAULT_PROBLEM_STATEMENT_AREA = "custom-problem-statement-area"
 def apply_default_custom_css():
     st.markdown(
         """
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap" rel="stylesheet">
         <style>
+        h1, h2, div, p {
+            font-family: "Zen Antique", serif !important;
+        }
         ."""
         + DEFAULT_TOP_TEXT_AREA
         + """ {
@@ -19,7 +25,6 @@ def apply_default_custom_css():
             border: 2px solid #11567F;  /* グレーのボーダー */
             border-left: 5px solid #29B5E8;  /* Snowflake色のサイドライン */
             color: #ffffff;  /* 白文字 */
-            font-family: 'Cinzel', serif;  /* 古代っぽいフォント */
             font-size: 16px;
             line-height: 1.6;
         }
@@ -115,7 +120,10 @@ def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA, image_file: 
     )
 
 
-def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM_STATEMENT_AREA):
+def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM_STATEMENT_AREA, image_file: str = 'pages/common/images/quest.jpeg'):
+    import base64
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
     st.html(
         f"""
         <p>
@@ -123,30 +131,15 @@ def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM
             {html_message}
             </div>
             <style>
-            .{css_name} {{
-                background-color: rgb(190, 205, 214);
-                padding: 30px;
-            }}
             .{css_name} .box {{
                 border-radius: 10px;
             }}
             .{css_name} {{
-                background-color: rgb(240, 240, 250);
-                transition: box-shadow 0.5s;
-                color: #696969;
-                box-shadow:
-                    10px 10px 30px transparent,
-                    -10px -10px 30px transparent,
-                    inset 10px 10px 30px rgba(18, 47, 61, 0.5),
-                    inset -10px -10px 30px rgba(248, 253, 255, 0.9);
-            }}
-            .{css_name}:hover {{
-                color: #a0522d;
-                box-shadow:
-                    10px 10px 30px rgba(18, 47, 61, 0.5),
-                    -10px -10px 30px rgba(248, 253, 255, 0.9),
-                    inset 10px 10px 30px transparent,
-                    inset -10px -10px 30px transparent;
+                background-color: rgba(2, 2, 2, 0);
+                background-image: url(data:image/{"png"};base64,{encoded_string});
+                background-position: top;
+                padding: 40px 5%;
+                color: #000
             }}
             </style>
         </p>

@@ -1,6 +1,6 @@
 import streamlit as st
 from snowflake.snowpark import Session
-from snowflake.snowpark.functions import col, count, min
+from snowflake.snowpark import functions as F
 
 from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
@@ -50,12 +50,14 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("Gain Insight!", divider="rainbow")
 
-    display_problem_statement("""
+    display_problem_statement(
+        """
                               <i>“人々の選択で世界は刻々と変化していき、AIデータクラウドはそれを克明に映し出す。
                               英雄は映し出された姿からすぐさま意味を紡ぎ出すだろう。———一の賢者、トール”</i><br />
                               <br />
                               現時点で最も投票が少ない選択肢に投票すればクリア。最も投票が少ない選択肢を予測するのだ！
-                              """)
+                              """
+    )
 
     st.write(f"投票回数の上限は {max_attempts}回です。")
     st.subheader("選択肢")
@@ -72,7 +74,11 @@ def process_answer(answer: str, state, session: Session) -> None:
     # hand_dataテーブルを読み込み
     converter = ABCConverter()
     hand_data = session.table("hand_data")
-    hand_counts = hand_data.groupBy("hand").agg(count("*").alias("frequency")).sort(col("frequency"), ascending=True)
+    hand_counts = (
+        hand_data.groupBy("hand")
+        .agg(F.count("*").alias("frequency"))
+        .sort(F.col("frequency"), ascending=True)
+    )
 
     # 投票結果の表示
     st.subheader("投票結果")
@@ -80,9 +86,13 @@ def process_answer(answer: str, state, session: Session) -> None:
     hand_counts_df = hand_counts.toPandas()
     hand_counts_df["HAND"] = hand_counts_df["HAND"].apply(converter.to_answer)
     # answerの投票数を取得
-    vote_counts = hand_counts_df[hand_counts_df["HAND"] == answer]["FREQUENCY"].values[0]
+    vote_counts = hand_counts_df[hand_counts_df["HAND"] == answer]["FREQUENCY"].values[
+        0
+    ]
     # answerよりも投票数が多い選択肢の数を取得
-    lower_detected_times = len(hand_counts_df[hand_counts_df["FREQUENCY"] < vote_counts])
+    lower_detected_times = len(
+        hand_counts_df[hand_counts_df["FREQUENCY"] < vote_counts]
+    )
 
     # デバッグのためにテーブルと選択肢を標準出力にダンプ
     # st.table(hand_counts_df)

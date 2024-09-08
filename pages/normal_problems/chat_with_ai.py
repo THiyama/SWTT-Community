@@ -45,6 +45,16 @@ def ai_problem(tab_name: str, max_attempts: int, session: Session) -> str:
         "3つのモデルと会話してその中から Snowflake Arctic だと思うものを選んで回答するのだ！"
     )
 
+    with st.expander("Snowflake Arctic とは？"):
+        st.write(
+            """
+            Snowflake Arctic は、Enterprise 向けに最適化された大規模言語モデル（LLM）で、
+            SQL 生成やコード生成などの複雑なタスクに優れた効率を発揮します。
+            オープンソースで提供され、コスト効率の高いAIソリューションを提供します。
+            https://www.snowflake.com/ja/blog/arctic-open-efficient-foundation-language-models-snowflake/
+            """
+        )
+
     initialize_chat_history()
     converter = ABCConverter()
     abc_options = list(converter.abc_to_answer.keys())

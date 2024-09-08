@@ -6,7 +6,7 @@ from utils.utils import save_table, init_state, clear_submit_button
 from utils.attempt_limiter import check_is_failed, init_attempt, process_exceeded_limit
 from utils.designs import header_animation, display_problem_statement
 
-MAX_ATTEMPTS_MAIN = 1
+MAX_ATTEMPTS_MAIN = 2
 
 
 class ABCConverter:
@@ -31,16 +31,39 @@ def add_new_command(session, team_id, hand):
     session.sql(insert_query).collect()
 
 
+@st.cache_data
+def selection_to_image(selection: str, failed: bool) -> str:
+    if selection == "DATA FOUNDATION":
+        key = "A"
+    elif selection == "AI":
+        key = "B"
+    elif selection == "APP":
+        key = "C"
+    else:
+        return ""
+    if failed:
+        key += "_failed"
+    return f"pages/normal_problems/resources/rsp/selection_{key}.jpeg"
+
+
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
-    st.header("応援！", divider="rainbow")
+    st.header("Gain Insight!", divider="rainbow")
 
-    display_problem_statement("現時点で最も投票が少ない選択肢を予測して投票するのだ！")
+    display_problem_statement("""
+                              <i>“人々の選択で世界は刻々と変化していき、AIデータクラウドはそれを克明に映し出す。
+                              英雄は映し出された姿からすぐさま意味を紡ぎ出すだろう。———一の賢者、トール”</i><br />
+                              <br />
+                              現時点で最も投票が少ない選択肢に投票すればクリア。最も投票が少ない選択肢を予測するのだ！
+                              """)
 
     st.write(f"投票回数の上限は {max_attempts}回です。")
-    st.markdown("### 選択肢")
+    st.subheader("選択肢")
     options = ["DATA FOUNDATION", "AI", "APP"]
-    answer = st.radio("Your answer:", options, index=None, key=f"{tab_name}_answer")
+    answer = st.radio("Your choice:", options, index=None, key=f"{tab_name}_answer")
+    image_file = selection_to_image(answer, False)
+    if image_file:
+        st.image(image_file, use_column_width=True)
     return answer
 
 
@@ -49,24 +72,39 @@ def process_answer(answer: str, state, session: Session) -> None:
     # hand_dataテーブルを読み込み
     converter = ABCConverter()
     hand_data = session.table("hand_data")
-    hand_counts = hand_data.groupBy("hand").agg(count("*").alias("frequency"))
-    min_freq = hand_counts.select(min("frequency")).collect()[0][0]
-    min_freq_hands = (
-        hand_counts.filter(col("frequency") == min_freq).select("hand").collect()
-    )
-    min_freq_hands = [row["HAND"] for row in min_freq_hands]
-
-    min_freq_hands = [converter.to_answer(hand) for hand in min_freq_hands]
+    hand_counts = hand_data.groupBy("hand").agg(count("*").alias("frequency")).sort(col("frequency"), ascending=True)
 
     # 投票結果の表示
-    st.write("投票結果")
-    # hands_countsを表示
+    st.subheader("投票結果")
+    # hands_countsとanswerを突合して、answerよりも投票数が多い選択肢が何個あるかを確認する
     hand_counts_df = hand_counts.toPandas()
     hand_counts_df["HAND"] = hand_counts_df["HAND"].apply(converter.to_answer)
-    st.table(hand_counts_df)
+    # answerの投票数を取得
+    vote_counts = hand_counts_df[hand_counts_df["HAND"] == answer]["FREQUENCY"].values[0]
+    # answerよりも投票数が多い選択肢の数を取得
+    lower_detected_times = len(hand_counts_df[hand_counts_df["FREQUENCY"] < vote_counts])
+
+    # デバッグのためにテーブルで表示 
+    # st.table(hand_counts_df)
+
+    if lower_detected_times == 0:
+        st.write("あなたは投票数が最も少ない選択肢を選びました！")
+        image_file = selection_to_image(answer, False)
+        if image_file:
+            st.image(image_file, use_column_width=True)
+    elif lower_detected_times == 1:
+        st.write("あなたは投票数が2番目に多い選択肢を選びました。")
+        image_file = selection_to_image(answer, True)
+        if image_file:
+            st.image(image_file, use_column_width=True)
+    elif lower_detected_times >= 2:
+        st.write("あなたは投票数が最も多い選択肢を選びました。")
+        image_file = selection_to_image(answer, True)
+        if image_file:
+            st.image(image_file, use_column_width=True)
 
     # 投票が最も少ない選択肢が正解
-    if answer in min_freq_hands:
+    if lower_detected_times == 0:
         state["is_clear"] = True
         st.success("クイズに正解しました")
     else:

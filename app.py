@@ -44,11 +44,11 @@ if "team_id" in st.session_state:
 else:
     index = 0
 
+st.write("")
 team_id = st.selectbox(
     label="結成するチームを選択",
     options=list(TEAMS.keys()),
     index=index,
-    label_visibility="hidden",
 )
 
 if team_id:

@@ -17,7 +17,7 @@ TAB_TITLES = {
     "real_ice": "Open かき氷🧊",
     "rsp": "Unistore じゃんけん大会✋️",
     "nw_role": "Governance わさびたこ焼き🐙",
-    "problem1": "Time Travel シューティング🔫",
+    "sort_services2": "Time Travel シューティング🔫",
     "real_wanage": "Query 輪投げ➰️",
 }
 

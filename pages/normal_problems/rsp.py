@@ -84,8 +84,10 @@ def process_answer(answer: str, state, session: Session) -> None:
     # answerよりも投票数が多い選択肢の数を取得
     lower_detected_times = len(hand_counts_df[hand_counts_df["FREQUENCY"] < vote_counts])
 
-    # デバッグのためにテーブルで表示 
+    # デバッグのためにテーブルと選択肢を標準出力にダンプ
     # st.table(hand_counts_df)
+    print(hand_counts_df.to_string())
+    print(f"answer: {answer}")
 
     if lower_detected_times == 0:
         st.write("あなたは投票数が最も少ない選択肢を選びました！")

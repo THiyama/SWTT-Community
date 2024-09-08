@@ -71,7 +71,7 @@ def explaining_part(_showed_table: object) -> None:
         st.dataframe(_showed_table, hide_index=True, use_container_width=True)
         st.code(
             """
-            CREATE MASKING POLICY AS age_mask as (val int) returns int ->
+           CREATE MASKING POLICY age_mask AS (val int) RETURNS int ->
                 CASE 
                     WHEN current_role() in ('SALES_DEPT_ROLE', 'CORPORATE_PLANNING_DEPT_ROLE', 'RESEARCH_AND_DEVELOPMENT_DEPT_ROLE') then val
                     ELSE null
@@ -79,7 +79,7 @@ def explaining_part(_showed_table: object) -> None:
 
             ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS MODIFY COLUME '年代' SET MASKING POLICY age_mask;
             
-            CREATE MASKING POLICY AS member_mask as (val boolean) returns boolean ->
+            CREATE MASKING POLICY member_mask AS (val boolean) RETURNS boolean ->
                 CASE 
                     WHEN current_role() in ('SECURITY_DEPT_ROLE', 'SALES_DEPT_ROLE', 'CORPORATE_PLANNING_DEPT_ROLE', 'RESEARCH_AND_DEVELOPMENT_DEPT_ROLE') then val
                     ELSE null
@@ -87,7 +87,7 @@ def explaining_part(_showed_table: object) -> None:
 
             ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS MODIFY COLUME '本会員' SET MASKING POLICY member_mask;
 
-            CREATE MASKING POLICY AS agreement_mask as (val boolean) returns boolean ->
+            CREATE MASKING POLICY agreement_mask AS (val boolean) RETURNS boolean ->
                 CASE 
                     WHEN current_role() in ('SECURITY_DEPT_ROLE', 'SALES_DEPT_ROLE', 'RESEARCH_AND_DEVELOPMENT_DEPT_ROLE') then val
                     ELSE null
@@ -96,7 +96,7 @@ def explaining_part(_showed_table: object) -> None:
             ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS MODIFY COLUME 'データ利用の承諾可否' SET MASKING POLICY agreement_mask;
 
 
-            CREATE MASKING POLICY AS email_mask as (val string) returns string ->
+            CREATE MASKING POLICY email_mask AS (val string) RETURNS string ->
                 CASE 
                     WHEN current_role() in ('SALES_DEPT_ROLE') then val
                     WHEN current_role() in ('CORPORATE_PLANNING_DEPT_ROLE') then regexp_replace(val,'.+\@','*****@') 
@@ -106,7 +106,7 @@ def explaining_part(_showed_table: object) -> None:
             ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS MODIFY COLUME 'メールアドレス' SET MASKING POLICY email_mask;
 
 
-            CREATE ROW ACCESS POLICY non_agr_mask as (agr boolean) returns boolean ->
+            CREATE ROW ACCESS POLICY non_agr_mask AS (agr boolean) RETURNS boolean ->
                 CASE 
                     WHEN current_role() in ('SALES_DEPT_ROLE') then True
                     WHEN current_role() in ('RESEARCH_AND_DEVELOPMENT_DEPT_ROLE') and agr = True then True
@@ -121,8 +121,7 @@ def explaining_part(_showed_table: object) -> None:
             GRANT SELECT ON TABLE SERVICE_SNOW.MASTER.CUSTOMERS TO ROLE CORPORATE_PLANNING_DEPT_ROLE;
             GRANT SELECT ON TABLE SERVICE_SNOW.MASTER.CUSTOMERS TO ROLE SALES_DEPT_ROLE;
             GRANT SELECT ON TABLE SERVICE_SNOW.MASTER.CUSTOMERS TO ROLE RESEARCH_AND_DEVELOPMENT_DEPT_ROLE;
-            
-            
+
             """,
             language="sql",
         )

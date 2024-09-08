@@ -66,9 +66,14 @@ def display_applied_message(message: str, css_name: str = DEFAULT_TOP_TEXT_AREA)
         unsafe_allow_html=True,
     )
 
+
 @st.cache_data
-def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA, image_file: str = 'pages/common/images/sky.png') -> None:
+def header_animation(
+    css_name: str = DEFAULT_HEADER_ANIMATION_AREA,
+    image_file: str = "pages/common/images/sky.png",
+) -> None:
     import base64
+
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
     st.html(
@@ -120,8 +125,13 @@ def header_animation(css_name: str = DEFAULT_HEADER_ANIMATION_AREA, image_file: 
     )
 
 
-def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM_STATEMENT_AREA, image_file: str = 'pages/common/images/quest.jpeg'):
+def display_problem_statement(
+    html_message: str,
+    css_name: str = DEFAULT_PROBLEM_STATEMENT_AREA,
+    image_file: str = "pages/common/images/quest.jpeg",
+):
     import base64
+
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
     st.html(
@@ -146,13 +156,17 @@ def display_problem_statement(html_message: str, css_name: str = DEFAULT_PROBLEM
         """
     )
 
+
 @st.cache_data
-def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode : bool = True):
+def background_image(
+    image_file: str = "pages/common/images/sky.png", dark_mode: bool = True
+):
     import base64
+
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
 
-    dark_mode_css = ''
+    dark_mode_css = ""
     if dark_mode:
         dark_mode_css = """
             .main::before {
@@ -167,7 +181,7 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
         """
 
     st.markdown(
-    f"""
+        f"""
     <style>
     [data-testid="stAppViewContainer"] > .main {{
         background-image: url(data:image/{"png"};base64,{encoded_string});
@@ -188,5 +202,5 @@ def background_image(image_file: str = 'pages/common/images/sky.png', dark_mode 
     }}
     </style>
     """,
-    unsafe_allow_html=True
+        unsafe_allow_html=True,
     )

@@ -43,7 +43,7 @@ TEAMS = {
     "OrgAdmin": "Org_Admin",
     "POLARIS": "POLARIS",
     "Quality Monitoring": "QualityMonitoring",
-    "Resouce Monitor": "ResouceMonitor",
+    "Resource Monitor": "ResouceMonitor",
     "Snowpark": "Snowpark",
     "Trust Center": "TrustCenter",
     "Universal Search": "UniversalSearch",

@@ -11,14 +11,14 @@ import hashlib
 
 
 TAB_TITLES = {
-    "be_positive": "Sentiment のど自慢🎤　",
-    "problem4": "Community 魚すくい🐠　",
-    "chat_with_ai": "Cortex 占い🔮　",
-    "real_ice": "Open かき氷🧊　",
-    "rsp": "Unistore じゃんけん大会✋️　",
-    "nw_role": "Governance わさびたこ焼き🐙　",
-    "problem1": "Time Travel シューティング🔫　",
-    "real_wanage": "Query 輪投げ➰️　",
+    "be_positive": "Sentiment のど自慢🎤",
+    "problem4": "Community 魚すくい🐠",
+    "chat_with_ai": "Cortex 占い🔮",
+    "real_ice": "Open かき氷🧊",
+    "rsp": "Unistore じゃんけん大会✋️",
+    "nw_role": "Governance わさびたこ焼き🐙",
+    "problem1": "Time Travel シューティング🔫",
+    "real_wanage": "Query 輪投げ➰️",
 }
 
 
@@ -160,7 +160,7 @@ def save_table(state: dict, session: Session):
         if not st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
             update_clear_status(session, state)
             st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-                ":white_check_mark: "
+                "✅️ "
                 + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
             )
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
@@ -177,7 +177,7 @@ def save_table(state: dict, session: Session):
             ]
         ):
             st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-                ":x: "
+                "❌️ "
                 + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
             )
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (

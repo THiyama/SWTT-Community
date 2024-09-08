@@ -87,7 +87,7 @@ for i, problem_id in enumerate(tabs.keys()):
 
         # クリアフラグを追加するIFステートメント
         if check_is_clear(session, state):
-            checker = ":white_check_mark: "
+            checker = "✅️ "
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
                 True
             )
@@ -95,7 +95,7 @@ for i, problem_id in enumerate(tabs.keys()):
                 False
             )
         elif check_is_failed(session, state):
-            checker = ":x: "
+            checker = "❌️ "
             st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
                 False
             )
@@ -136,10 +136,24 @@ else:
 
 st.session_state["problem_ids"] = problem_ids
 
-selected_tab = st.tabs(tab_titles)
 
-for i, tab_title in enumerate(problem_ids):
-    with selected_tab[i]:
-        tabs[tab_title].run(tab_title, session)
+# セレクトボックスの実装の場合
+selected_problem = st.selectbox(
+    "挑戦する問題を選択してください",
+    options=tab_titles,
+)
+
+selected_problem_id = problem_ids[tab_titles.index(selected_problem)]
+
+tabs[selected_problem_id].run(selected_problem_id, session)
+
+
+# タブの実装の場合
+# selected_tab = st.tabs(tab_titles)
+
+# for i, tab_title in enumerate(problem_ids):
+#     with selected_tab[i]:
+#         tabs[tab_title].run(tab_title, session)
+
 
 progress_bar.empty()

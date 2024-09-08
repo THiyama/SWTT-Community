@@ -33,7 +33,7 @@ def process_answer(answer: str, state, session: Session) -> None:
     else:
         state["is_clear"] = False
         st.error(
-            f"ポジティブが足りません！あなたのポジティブは{answer_sentiment}でした。"
+            f"ポジティブが足りません！あなたのポジティブは{answer_sentiment}でした。0.8 を超えるように頑張りましょう！"
         )
 
     save_table(state, session)

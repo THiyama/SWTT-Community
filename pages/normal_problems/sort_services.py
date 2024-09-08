@@ -129,15 +129,14 @@ def get_name(data, button_id, show_hint=True):
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
-    st.header("問題", divider="rainbow")
+    st.header("クリスタルの記憶を呼び起こせ", divider="rainbow")
 
     display_problem_statement("""
                               <i>“過去を知る者は未来を見通す英雄である。
-                              記憶の海を探れ。そしてSnowflakeの歴史の影を射貫いて真実の姿を露わにせよ。———時の賢者、ヒロキ”</i><br />
+                              記憶の海を探れ。そしてSnowflakeの歴史の影を射貫いて真実の姿を露わにせよ。”———時の賢者、ヒロキ</i><br />
                               <br />
                               6つのサービスを一般提供(GA)になった順番にクリックしろ！
                               """)
-    st.divider()
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # データを取得する

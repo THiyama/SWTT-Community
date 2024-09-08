@@ -46,18 +46,21 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("ヒーローを味方に", divider="rainbow")
 
-    display_problem_statement(
-        "この写真の6人がメンバーになっている、今年5月に新設されたSnowflakeのアンバサダープログラムは何？"
-    )
-    st.divider()
+    display_problem_statement("""
+                              <i>“戦友とは魚のようなもの。釣り上げれば手に力を、心に勇気を得る。
+                              それが大魚なら、なおさら。”———友の賢者、アユム</i><br />
+                              <br />
+                              Snowflakeに関する活動を積極的に行った人を表彰するアンバサダープログラムが今年5月に新設されました。以下の写真の6人が表彰されている、そのプログラムはどれ？
+                              """)
     display_squad_image()
 
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # 選択肢をシャッフルする
     order = get_random_order(st.session_state.team_id)
-    options = [PROGRAM_LIST[i - 1] for i in order]
+    options = ["🐠" + PROGRAM_LIST[i - 1] for i in order]
     answer = st.radio("Your answer:", options, index=None)
+    answer = answer[1:] if answer else None
 
     # 選択肢に応じた画像を表示する
     if answer:

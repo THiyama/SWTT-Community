@@ -13,7 +13,13 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("Be Positive!", divider="rainbow")
 
-    display_problem_statement("ポジティブな気分で、邪気を取り払うのだ！")
+    display_problem_statement("""
+                              <i>“誰だって自分の中に英雄がいるんだ。困ったときにはその英雄の出番。
+                              明るく笑えば空も晴れ渡るんだよ”———陽の賢者、アレ</i><br />
+                              <br />
+                              ポジティブメッセージの力で邪気を取り払うのだ！<sup>1</sup><br />
+                              <small><sup>1</sup> ポジティブかどうかはSnowflake Cortexが判定します。</small>
+                              """)
     st.write(f"回答回数の上限は {max_attempts}回です。")
     answer = st.text_input(
         "ポジティブメッセージを入力してください:", key=f"{tab_name}_answer"

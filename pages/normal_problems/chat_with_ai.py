@@ -41,9 +41,12 @@ def ai_problem(tab_name: str, max_attempts: int, session: Session) -> str:
     header_animation()
     st.header("Snowflake Arctic との邂逅", divider="rainbow")
 
-    display_problem_statement(
-        "3つのモデルと会話してその中から Snowflake Arctic だと思うものを選んで回答するのだ！"
-    )
+    display_problem_statement("""
+                              <i>“クリスタルが示すのは世界の変革。
+                              あなたが目的に叶ったLLMを選んだならば、データとLLMは一つになってすべてを加速する力を生み出すだろう。”———言の賢者、シンゴ</i><br />
+                              <br />
+                              3体のAIモデルの中に Snowflake Arctic がいる。3体との会話でそれぞれの正体を探り、Snowflake Arctic がどれかを当てろ！
+                              """)
 
     with st.expander("Snowflake Arctic とは？"):
         st.write(

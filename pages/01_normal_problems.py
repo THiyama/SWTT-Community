@@ -138,10 +138,16 @@ st.session_state["problem_ids"] = problem_ids
 
 
 # セレクトボックスの実装の場合
+if "selected_index" not in st.session_state:
+    st.session_state["selected_index"] = 0
+
 selected_problem = st.selectbox(
     "挑戦する問題を選択してください",
     options=tab_titles,
+    index=st.session_state["selected_index"],
 )
+
+st.session_state["selected_index"] = tab_titles.index(selected_problem)
 
 selected_problem_id = problem_ids[tab_titles.index(selected_problem)]
 

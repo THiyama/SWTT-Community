@@ -39,16 +39,11 @@ message = f"""
     """
 
 display_applied_message(message, css_name)
-if "team_id" in st.session_state:
-    index = list(TEAMS.keys()).index(st.session_state.team_id)
-else:
-    index = 0
 
 st.write("")
 team_id = st.selectbox(
     label="結成するチームを選択",
     options=list(TEAMS.keys()),
-    index=index,
 )
 
 if team_id:

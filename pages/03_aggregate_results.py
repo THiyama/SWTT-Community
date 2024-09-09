@@ -9,6 +9,7 @@ from utils.utils import (
     get_session,
     get_team_id,
     TAB_TITLES,
+    TEAMS,
 )
 from utils.designs import (
     apply_default_custom_css,
@@ -18,12 +19,17 @@ from utils.designs import (
 
 
 CLEAR_COUNT = 12
+is_display_ranking = False
+num_display_ranking = 3
 
 st.title("📊挑戦状況")
 background_image("pages/common/images/library.png")
 display_page_titles_sidebar()
 display_team_id_sidebar()
 get_team_id()
+
+with st.sidebar:
+    display_on_pc = st.toggle("文字サイズ：大")
 
 css_name = apply_default_custom_css()
 message = "ここでは、現在の各チームの挑戦状況を確認できるぞ。\n\nそなたらもどんどん挑戦して進むのだ！"
@@ -46,12 +52,15 @@ except AttributeError as e:
 pdf_problem_ids = pd.DataFrame(problem_ids, columns=["problem_id"])
 pdf_problem_ids["problem_name"] = pdf_problem_ids["problem_id"].map(TAB_TITLES)
 
+reversed_team_ids = {v: k for k, v in TEAMS.items()}
+
 for problem_id in problem_ids:
     if f"{problem_id}_is_over_clear" not in st.session_state:
         st.session_state[f"{problem_id}_is_over_clear"] = False
 
+
+st.subheader("問題ごとの正解チーム数")
 chart_placeholder = st.empty()
-st.write("\n\n\n")
 
 
 @st.fragment(run_every="10s")
@@ -92,14 +101,29 @@ def update_chart():
         color="color",
         color_discrete_map="identity",
         labels={"problem_name": "", "IS_CLEAR": "正解チーム数"},
+        category_orders={"problem_name": pdf_problem_ids["problem_name"].tolist()},
     )
 
-    fig.update_layout(
-        xaxis_range=[-0.5, 7.5],
-        yaxis_range=[0, 25],
-        plot_bgcolor="rgba(30, 30, 30, 0.7)",
-        paper_bgcolor="rgba(10, 10, 10, 0.5)",
-    )
+    if display_on_pc:
+        fig.update_xaxes(tickfont_size=20, tickangle=45)
+        fig.update_yaxes(tickfont_size=16)
+        fig.update_layout(height=600, width=1000)
+
+        fig.update_layout(
+            xaxis_range=[-0.5, 7.5],
+            yaxis_range=[0, 25],
+            plot_bgcolor="rgba(30, 30, 30, 0.7)",
+            paper_bgcolor="rgba(10, 10, 10, 0.5)",
+            yaxis_title_font_size=26,
+        )
+
+    else:
+        fig.update_layout(
+            xaxis_range=[-0.5, 7.5],
+            yaxis_range=[0, 25],
+            plot_bgcolor="rgba(30, 30, 30, 0.7)",
+            paper_bgcolor="rgba(10, 10, 10, 0.5)",
+        )
 
     fig.add_shape(
         type="line",
@@ -113,4 +137,55 @@ def update_chart():
     chart_placeholder.plotly_chart(fig, use_container_width=True)
 
 
+@st.fragment(run_every="10s")
+def update_ranking():
+    df_submit = session.table("submit2")
+
+    # Step 1: 各チームが最初に解けた問題を取得
+    df_solved_problems = (
+        df_submit.filter(F.col("is_clear") == True)
+        .group_by(F.col("team_id"), F.col("problem_id"))
+        .agg(F.min(F.col("timestamp")).alias("first_clear_time"))
+    )
+
+    # Step 2: チームごとの解けた問題数と解答速度（秒単位）を計算
+    df_team_scores = df_solved_problems.group_by(F.col("team_id")).agg(
+        F.count(F.col("problem_id")).alias("solved_problems_count"),
+        F.sum(
+            F.datediff(
+                "second",
+                F.to_timestamp(F.lit("2024-09-01 00:00:00")),
+                F.col("first_clear_time"),
+            )
+        ).alias("total_solve_time"),
+    )
+
+    # Step 3: スコアを計算し、最終的な結果を取得
+    pdf_final_scores = (
+        df_team_scores.select(
+            F.col("team_id"),
+            F.col("solved_problems_count"),
+            (
+                F.col("solved_problems_count") * 100000
+                - (F.col("total_solve_time") / 3600)
+            ).alias("score"),
+        )
+        .order_by(F.col("score").desc())
+        .limit(num_display_ranking)
+        .to_pandas()
+    )
+
+    # 結果の表示
+    pdf_final_scores["TEAM_NAME"] = pdf_final_scores["TEAM_ID"].map(reversed_team_ids)
+    pdf_final_scores.index = range(1, len(pdf_final_scores) + 1)
+
+    st.dataframe(pdf_final_scores["TEAM_NAME"])
+
+
 update_chart()
+
+if is_display_ranking:
+    st.subheader(f"ランキング（Top{num_display_ranking}）")
+    update_ranking()
+
+st.write("\n\n\n")

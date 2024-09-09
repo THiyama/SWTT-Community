@@ -12,8 +12,12 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("リアル課題", divider="rainbow")
 
-    display_problem_statement("輪投げエリアの課題をクリアし呪文を入手するのだ！")
-
+    display_problem_statement("""
+                              <i>“揺れる心で投げられた輪は空を切り、磨き抜かれた技で投げられた輪は真理の柱を捉える。
+                              正しき問は必ず正しき答えへと導かれる。”———問の賢者、カオリ</i><br />
+                              <br />
+                              輪投げエリアの課題をクリアし呪文を入手するのだ！
+                              """)
     st.write(f"回答回数の上限は {max_attempts}回です。")
     answer = st.text_input("Your answer:", key=f"{tab_name}_answer")
 

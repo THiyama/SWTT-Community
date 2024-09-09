@@ -12,7 +12,7 @@ import hashlib
 
 TAB_TITLES = {
     "be_positive": "Sentiment のど自慢🎤",
-    "problem4": "Community 魚すくい🐠",
+    "whats_squad": "Community 魚すくい🐠",
     "chat_with_ai": "Cortex 占い🔮",
     "real_ice": "Open かき氷🧊",
     "rsp": "Unistore じゃんけん大会✋️",

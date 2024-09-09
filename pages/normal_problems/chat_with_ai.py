@@ -23,7 +23,7 @@ class ABCConverter:
         return self.answer_to_abc[answer]
 
 
-MAX_ATTEMPTS_MAIN = 3
+MAX_ATTEMPTS_MAIN = 2
 
 
 def initialize_chat_history():

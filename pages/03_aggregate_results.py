@@ -25,6 +25,9 @@ display_page_titles_sidebar()
 display_team_id_sidebar()
 get_team_id()
 
+with st.sidebar:
+    display_on_pc = st.toggle("文字サイズ：大")
+
 css_name = apply_default_custom_css()
 message = "ここでは、現在の各チームの挑戦状況を確認できるぞ。\n\nそなたらもどんどん挑戦して進むのだ！"
 display_applied_message(message, css_name)
@@ -94,12 +97,26 @@ def update_chart():
         labels={"problem_name": "", "IS_CLEAR": "正解チーム数"},
     )
 
-    fig.update_layout(
-        xaxis_range=[-0.5, 7.5],
-        yaxis_range=[0, 25],
-        plot_bgcolor="rgba(30, 30, 30, 0.7)",
-        paper_bgcolor="rgba(10, 10, 10, 0.5)",
-    )
+    if display_on_pc:
+        fig.update_xaxes(tickfont_size=20, tickangle=45)
+        fig.update_yaxes(tickfont_size=16)
+        fig.update_layout(height=600, width=1000)
+
+        fig.update_layout(
+            xaxis_range=[-0.5, 7.5],
+            yaxis_range=[0, 25],
+            plot_bgcolor="rgba(30, 30, 30, 0.7)",
+            paper_bgcolor="rgba(10, 10, 10, 0.5)",
+            yaxis_title_font_size=26,
+        )
+
+    else:
+        fig.update_layout(
+            xaxis_range=[-0.5, 7.5],
+            yaxis_range=[0, 25],
+            plot_bgcolor="rgba(30, 30, 30, 0.7)",
+            paper_bgcolor="rgba(10, 10, 10, 0.5)",
+        )
 
     fig.add_shape(
         type="line",

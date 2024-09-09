@@ -172,7 +172,6 @@ def save_table(state: dict, session: Session):
                     f"{state['problem_id']}_{state['team_id']}_is_clear"
                 ] = True
 
-                st.session_state["rerun"] = True
                 st.rerun()
 
         else:
@@ -194,7 +193,6 @@ def save_table(state: dict, session: Session):
                     f"{state['problem_id']}_{state['team_id']}_is_failed"
                 ] = True
 
-                st.session_state["rerun"] = True
                 st.rerun()
 
 

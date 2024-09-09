@@ -138,16 +138,27 @@ st.session_state["problem_ids"] = problem_ids
 
 
 # セレクトボックスの実装の場合
-if "selected_index" not in st.session_state:
-    st.session_state["selected_index"] = 0
+if "rerun" not in st.session_state:
+    st.session_state["rerun"] = False
+
+selected_index_state_name = f"{team_id}_selected_index"
+if selected_index_state_name not in st.session_state:
+    st.session_state[selected_index_state_name] = 0
+
+
+def update_selected_index():
+    st.session_state[selected_index_state_name] = tab_titles.index(
+        st.session_state[f"{team_id}_selected_problem"]
+    )
+
 
 selected_problem = st.selectbox(
     "挑戦する問題を選択してください",
     options=tab_titles,
-    index=st.session_state["selected_index"],
+    index=st.session_state[selected_index_state_name],
+    on_change=update_selected_index,
+    key=f"{team_id}_selected_problem",
 )
-
-st.session_state["selected_index"] = tab_titles.index(selected_problem)
 
 selected_problem_id = problem_ids[tab_titles.index(selected_problem)]
 

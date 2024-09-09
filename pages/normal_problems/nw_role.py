@@ -106,14 +106,14 @@ def explaining_part(_showed_table: object) -> None:
             ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS MODIFY COLUME 'メールアドレス' SET MASKING POLICY email_mask;
 
 
-            CREATE ROW ACCESS POLICY non_agr_mask AS (agr boolean) RETURNS boolean ->
+            CREATE ROW ACCESS POLICY non_agreement_mask AS (agr boolean) RETURNS boolean ->
                 CASE 
                     WHEN current_role() in ('SALES_DEPT_ROLE') then True
                     WHEN current_role() in ('RESEARCH_AND_DEVELOPMENT_DEPT_ROLE') and agr = True then True
                     ELSE False
                 END;
 
-            ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS ADD ROW ACCESS POLICY non_member_mask ON ('データ利用の承諾可否');
+            ALTER TABLE SERVICE_SNOW.MASTER.CUSTOMERS ADD ROW ACCESS POLICY non_agreement_mask ON ('データ利用の承諾可否');
 
             
             GRANT SELECT ON TABLE SERVICE_SNOW.MASTER.CUSTOMERS TO ROLE SECURITY_DEPT_ROLE;

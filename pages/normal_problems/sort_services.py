@@ -1,6 +1,5 @@
 import streamlit as st
 from snowflake.snowpark import Session
-from streamlit_image_select import image_select
 from st_clickable_images import clickable_images
 
 from utils.utils import save_table, init_state, clear_submit_button, string_to_hash_int
@@ -70,29 +69,91 @@ def display_image(data, index, caption):
             img = open_image_by_base64(data[index][3])
             key = f"{st.session_state[PROBLEM_TAG][TRY_TIMES_TAG]}_{PROBLEM_TAG}_{image_tag}_active"
             # 画像を表示してクリックイベントを取得
-            st.session_state[PROBLEM_TAG][image_tag] = clickable_images([f"data:image/png;base64,{img}"], titles=[caption], div_style={"padding": "0px", "margin": "0px", "display": "flex", "justify-content": "center"}, img_style={"padding": "0px", "margin": "0px", "width": "240px"}, key=key)
+            st.session_state[PROBLEM_TAG][image_tag] = clickable_images(
+                [f"data:image/png;base64,{img}"],
+                titles=[caption],
+                div_style={
+                    "padding": "0px",
+                    "margin": "0px",
+                    "display": "flex",
+                    "justify-content": "center",
+                },
+                img_style={"padding": "0px", "margin": "0px", "width": "240px"},
+                key=key,
+            )
             # キャプションを表示
-            st.html(f"<div style=\"text-align: center; position: relative; transform: translateY(-80%)\">{caption}</div>")
+            st.html(
+                f'<div style="text-align: center; position: relative; transform: translateY(-80%)">{caption}</div>'
+            )
     if st.session_state[PROBLEM_TAG][image_tag] == 0:
         with placeholder1.container():
             img = open_image_by_base64(data[index][4])
             key = f"{PROBLEM_TAG}_{image_tag}_inactive"
             # 画像を表示
-            clickable_images([f"data:image/png;base64,{img}"], titles=[caption], div_style={"padding": "0px", "margin": "0px", "display": "flex", "justify-content": "center"}, img_style={"padding": "0px", "margin": "0px", "width": "240px"}, key=key)
+            clickable_images(
+                [f"data:image/png;base64,{img}"],
+                titles=[caption],
+                div_style={
+                    "padding": "0px",
+                    "margin": "0px",
+                    "display": "flex",
+                    "justify-content": "center",
+                },
+                img_style={"padding": "0px", "margin": "0px", "width": "240px"},
+                key=key,
+            )
             # キャプションを表示
-            st.html(f"<div style=\"text-align: center; position: relative; transform: translateY(-80%)\">{caption}</div>")
+            st.html(
+                f'<div style="text-align: center; position: relative; transform: translateY(-80%)">{caption}</div>'
+            )
 
 
 # 問題用のデータセットを定義する
 @st.cache_data
 def get_data(team_id):
     base_list = [
-        ["button1", "Data Sharing",           "1", "pages/normal_problems/resources/problem1/button1.png", "pages/normal_problems/resources/problem1/button1.inactive.png"],
-        ["button2", "Snowpark",               "2", "pages/normal_problems/resources/problem1/button2.png", "pages/normal_problems/resources/problem1/button2.inactive.png"],
-        ["button3", "Streamlit in Snowflake", "3", "pages/normal_problems/resources/problem1/button3.png", "pages/normal_problems/resources/problem1/button3.inactive.png"],
-        ["button4", "Dynamic Tables",         "4", "pages/normal_problems/resources/problem1/button4.png", "pages/normal_problems/resources/problem1/button4.inactive.png"],
-        ["button5", "Native Apps Framework",  "5", "pages/normal_problems/resources/problem1/button5.png", "pages/normal_problems/resources/problem1/button5.inactive.png"],
-        ["button6", "Universal Search",       "6", "pages/normal_problems/resources/problem1/button6.png", "pages/normal_problems/resources/problem1/button6.inactive.png"],
+        [
+            "button1",
+            "Data Sharing",
+            "1",
+            "pages/normal_problems/resources/problem1/button1.png",
+            "pages/normal_problems/resources/problem1/button1.inactive.png",
+        ],
+        [
+            "button2",
+            "Snowpark",
+            "2",
+            "pages/normal_problems/resources/problem1/button2.png",
+            "pages/normal_problems/resources/problem1/button2.inactive.png",
+        ],
+        [
+            "button3",
+            "Streamlit in Snowflake",
+            "3",
+            "pages/normal_problems/resources/problem1/button3.png",
+            "pages/normal_problems/resources/problem1/button3.inactive.png",
+        ],
+        [
+            "button4",
+            "Dynamic Tables",
+            "4",
+            "pages/normal_problems/resources/problem1/button4.png",
+            "pages/normal_problems/resources/problem1/button4.inactive.png",
+        ],
+        [
+            "button5",
+            "Native Apps Framework",
+            "5",
+            "pages/normal_problems/resources/problem1/button5.png",
+            "pages/normal_problems/resources/problem1/button5.inactive.png",
+        ],
+        [
+            "button6",
+            "Universal Search",
+            "6",
+            "pages/normal_problems/resources/problem1/button6.png",
+            "pages/normal_problems/resources/problem1/button6.inactive.png",
+        ],
     ]
 
     # base_lstをシャッフルする。randomのシード値をチームIDから生成する
@@ -131,12 +192,14 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
     st.header("クリスタルの記憶を呼び起こせ", divider="rainbow")
 
-    display_problem_statement("""
+    display_problem_statement(
+        """
                               <i>“過去を知る者は未来を見通す英雄である。
                               記憶の海を探れ。そしてSnowflakeの歴史の影を射貫いて真実の姿を露わにせよ。”———時の賢者、ヒロキ</i><br />
                               <br />
                               6つのサービスを一般提供(GA)になった順番にクリックしろ！
-                              """)
+                              """
+    )
     st.write(f"回答回数の上限は {max_attempts}回です。")
 
     # データを取得する
@@ -226,7 +289,9 @@ def run(tab_name: str, session: Session):
     placeholder = st.empty()
     if check_is_failed(session, state):
         process_exceeded_limit(placeholder, state)
-    elif placeholder.button("submit", key=f"{tab_name}_submit", disabled=button_disabled):
+    elif placeholder.button(
+        "submit", key=f"{tab_name}_submit", disabled=button_disabled
+    ):
         if main_attempt.check_attempt():
             if answer:
                 process_answer(answer, state, session)  # ★

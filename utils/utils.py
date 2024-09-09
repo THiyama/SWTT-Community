@@ -151,38 +151,51 @@ def save_table(state: dict, session: Session):
         ],
     )
 
-    # session.write_pandas(df, "SUBMIT2", auto_create_table=False, overwrite=False)
-    snow_df = session.create_dataframe(df)
-    snow_df.write.mode("append").save_as_table("submit2")
+    with st.spinner("クリスタルと通信中..."):
+        # session.write_pandas(df, "SUBMIT2", auto_create_table=False, overwrite=False)
+        snow_df = session.create_dataframe(df)
+        snow_df.write.mode("append").save_as_table("submit2")
 
-    if state["is_clear"]:
-        # はじめてのクリアの場合、if文内のロジックを実行する。
-        if not st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"]:
-            update_clear_status(session, state)
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-                "✅️ "
-                + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
-            )
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_clear"] = (
-                True
-            )
-
-    else:
-        update_failed_status(session, state)
-        # 制限に到達している かつ クリアしていない 場合、if文内のロジックを実行する。
-        if (
-            check_is_failed(session, state)
-            and not st.session_state[
+        if state["is_clear"]:
+            # はじめてのクリアの場合、if文内のロジックを実行する。
+            if not st.session_state[
                 f"{state['problem_id']}_{state['team_id']}_is_clear"
-            ]
-        ):
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
-                "❌️ "
-                + st.session_state[f"{state['problem_id']}_{state['team_id']}_title"]
-            )
-            st.session_state[f"{state['problem_id']}_{state['team_id']}_is_failed"] = (
-                True
-            )
+            ]:
+                update_clear_status(session, state)
+                st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+                    "✅️ "
+                    + st.session_state[
+                        f"{state['problem_id']}_{state['team_id']}_title"
+                    ]
+                )
+                st.session_state[
+                    f"{state['problem_id']}_{state['team_id']}_is_clear"
+                ] = True
+
+                st.session_state["rerun"] = True
+                st.rerun()
+
+        else:
+            update_failed_status(session, state)
+            # 制限に到達している かつ クリアしていない 場合、if文内のロジックを実行する。
+            if (
+                check_is_failed(session, state)
+                and not st.session_state[
+                    f"{state['problem_id']}_{state['team_id']}_is_clear"
+                ]
+            ):
+                st.session_state[f"{state['problem_id']}_{state['team_id']}_title"] = (
+                    "❌️ "
+                    + st.session_state[
+                        f"{state['problem_id']}_{state['team_id']}_title"
+                    ]
+                )
+                st.session_state[
+                    f"{state['problem_id']}_{state['team_id']}_is_failed"
+                ] = True
+
+                st.session_state["rerun"] = True
+                st.rerun()
 
 
 def update_clear_status(session: Session, state: dict) -> None:

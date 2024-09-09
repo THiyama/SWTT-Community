@@ -10,13 +10,16 @@ def explaining_part(_showed_table: object) -> None:
 
     display_problem_statement(
         """
-        雪の結晶株式会社は、自社提供のサービスの一般利用者の情報をデータベースに保存しています.<br>
-        所属部門/権限(Role)によって、閲覧できるユーザ情報は厳しく制限されています.<br>
-        <br>
-        あなたはデータエンジニアであり、部署に割り当てられた権限（Role）に成り代わることにより、他部署所属の社員が「どのデータを閲覧できるか/どのデータを閲覧できないか」を確認することができます.<br>
-        <br>
-        さて、どの部署所属であれば<br>
-        「サービスの本会員」かつ「データ利用の許諾済み」の一般利用者の人数を確認することができるでしょうか？
+        <i>“同じ皿に乗っていても手を出してはいけないものがある。
+        それはきっと相応しい人が手に取ってこそ、意味があるのさ。”———護の賢者、ユーヤ</i><br />
+        <br />
+        雪の結晶株式会社は、自社サービスのユーザ情報をデータベースに保存している。<br />
+        また、所属部署と権限（Role）によって、閲覧できるユーザ情報は厳しく制限されている。<br />
+        <br />
+        あなたはデータエンジニアで、部署に割り当てられた権限（Role）に成り代わることで、他部署所属の社員が「どのデータを閲覧できるか/できないか」を検証することができる。<br />
+        <br />
+        さて、どの部署に所属している社員がこのサービスの「本会員」と「データ利用の許諾済み」を確認できるだろうか？<br />
+        検証を活用して正解を導き出せ。  
         """
     )
     st.divider()
@@ -333,16 +336,16 @@ def main():
     }
 
     header_animation()
-    st.header("クリスタルのガバナンスの結界を強固に", divider="rainbow")
+    st.header("ガバナンスの結界を検証せよ", divider="rainbow")
     explaining_part(_showed_table=table)
 
     st.header("回答", divider="blue")
     user_ans_ip = selecting_part(
-        _items=items_ip, _label="Snowflakeにアクセスできるネットワークはどれでしょう？"
+        _items=items_ip, _label="Snowflakeにアクセスできるネットワークを選べ。"
     )
     user_ans_role = multiselecting_part(
         _items=[l.get("Dept") for l in items_role],
-        _label="本会員数とデータ利用許諾の可否どちらも確認できる部門(Role)はどれでしょう？（複数選択）",
+        _label="「本会員」と「データ利用の許諾済み」を確認できる部門（Role）を選べ。（複数選択）",
     )
 
     placeholder = st.empty()
@@ -364,10 +367,10 @@ def main():
 
     st.divider()
     st.header("検証", divider="green")
-    st.info("実際に試して答えを導いてみましょう", icon="⭐️")
+    st.info("実際に試して正解を導き出すのだ", icon="⭐️")
 
     selected_ip = selecting_part(
-        _items=items_ip, _label="あなたはどこからSnowflakeに接続しますか？"
+        _items=items_ip, _label="Snowflakeにアクセスするネットワークを選べ。"
     )
     if selected_ip is None:
         st.write("選択してください")
@@ -380,7 +383,7 @@ def main():
 
     selected_role = selecting_part(
         _items=[l.get("Dept") for l in items_role],
-        _label="あなたはどの部署所属の人間に成り代わりますか？",
+        _label="あなたが成り代わる権限（Role）を選べ。",
     )
     st.divider()
 

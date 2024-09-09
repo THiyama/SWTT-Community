@@ -10,14 +10,20 @@ MAX_ATTEMPTS_MAIN = 3
 
 def present_quiz(tab_name: str, max_attempts: int) -> str:
     header_animation()
-    st.header("リアル課題", divider="rainbow")
+    st.header("Snowflake！", divider="rainbow")
 
-    display_problem_statement("""
+    display_problem_statement(
+        """
                               <i>“Icebergがデータレイクの在り方を一変させる様子は、残暑を払う削り氷のように爽快。
                               好みの蜜で楽しめるしね。”———氷の賢者、ショーゴ</i><br />
                               <br />
                               かき氷エリアの課題をクリアし呪文を入手するのだ！
-                              """)
+                              """
+    )
+
+    with st.expander("かき氷エリアの場所を確認する"):
+        st.image("pages/normal_problems/resources/real_event/real_event.png")
+
     st.write(f"回答回数の上限は {max_attempts}回です。")
     answer = st.text_input("Your answer:", key=f"{tab_name}_answer")
 

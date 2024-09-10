@@ -1,13 +1,13 @@
+import hashlib
 from datetime import datetime
 
 import pandas as pd
 import streamlit as st
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Session
+from snowflake.snowpark.exceptions import SnowparkSQLException
 
 from utils.attempt_limiter import check_is_failed, update_failed_status
-
-import hashlib
 
 
 TAB_TITLES = {
@@ -55,10 +55,24 @@ TEAMS = {
 
 def create_session(team_id: str, is_info: bool = True) -> Session:
     try:
-        session = st.connection(team_id, type="snowflake").session()
+        session = st.connection(team_id, type="snowflake", max_entries=1).session()
+        session.sql("SELECT 1").collect()
+        print("セッションの作成に成功しました。")
         if is_info:
             st.success("データクリスタルとのリンクに成功したぞ。次なる試練へ進むのだ！")
         return session
+
+    except SnowparkSQLException as e:
+        print(e)
+        print("セッションの有効期限切れエラーが発生しました。")
+        print("セッションの再作成を試みます。")
+        session = st.connection(team_id, type="snowflake", max_entries=1).session()
+        session.sql("SELECT 1").collect()
+        print("セッションの再作成に成功しました。")
+        if is_info:
+            st.success("データクリスタルとのリンクに成功したぞ。次なる試練へ進むのだ！")
+        return session
+
     except Exception as e:
         if is_info:
             st.error("ふむ、、なにか問題が発生したようだな")

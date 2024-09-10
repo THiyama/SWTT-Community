@@ -53,7 +53,7 @@ TEAMS = {
 }
 
 
-def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
+def create_session(team_id: str, is_info: bool = True) -> Session:
     try:
         session = st.connection(team_id, type="snowflake").session()
         if is_info:
@@ -61,9 +61,9 @@ def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
         return session
     except Exception as e:
         if is_info:
-            _placeholder.empty()
-            _placeholder.error("ふむ、、なにか問題が発生したようだな")
+            st.error("ふむ、、なにか問題が発生したようだな")
             print(e)
+            st.stop()
 
 
 def get_session():

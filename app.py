@@ -48,8 +48,10 @@ team_id = st.selectbox(
 )
 
 if team_id:
+    st.session_state.clear()
     st.session_state.team_id = team_id
     st.session_state.snow_session = create_session(TEAMS[team_id])
 
     if st.button("挑戦を開始する"):
+        print(st.session_state)
         st.switch_page("pages/01_normal_problems.py")

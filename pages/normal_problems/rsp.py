@@ -43,7 +43,7 @@ def selection_to_image(selection: str, failed: bool) -> str:
     elif selection == OPTIONS[1]:
         key = "b"
     elif selection == OPTIONS[2]:
-        key = "d"
+        key = "c"
     else:
         return ""
     if failed:

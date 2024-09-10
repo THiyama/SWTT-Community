@@ -53,7 +53,6 @@ TEAMS = {
 }
 
 
-@st.cache_resource
 def create_session(team_id: str, _placeholder, is_info: bool = True) -> Session:
     try:
         session = st.connection(team_id, type="snowflake").session()

@@ -39,6 +39,7 @@ message = f"""
     """
 
 display_applied_message(message, css_name)
+background_image("pages/common/images/sky.png", dark_mode=False)
 
 st.write("")
 team_id = st.selectbox(
@@ -48,9 +49,7 @@ team_id = st.selectbox(
 
 if team_id:
     st.session_state.team_id = team_id
-    placeholder = st.empty()
-    if placeholder.button("挑戦を開始する"):
-        st.switch_page("pages/01_normal_problems.py")
-    st.session_state.snow_session = create_session(TEAMS[team_id], placeholder)
+    st.session_state.snow_session = create_session(TEAMS[team_id])
 
-background_image("pages/common/images/sky.png", dark_mode=False)
+    if st.button("挑戦を開始する"):
+        st.switch_page("pages/01_normal_problems.py")

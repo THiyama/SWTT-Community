@@ -7,11 +7,16 @@ from utils.attempt_limiter import check_is_failed, init_attempt, process_exceede
 from utils.designs import header_animation, display_problem_statement
 
 MAX_ATTEMPTS_MAIN = 2
+OPTIONS = ["DATA FOUNDATION", "ENTERPRISE AI", "BUILD & DISTRIBUTE APP"]
 
 
 class ABCConverter:
     def __init__(self):
-        self.abc_to_answer = {"A": "DATA FOUNDATION", "B": "AI", "C": "APP"}
+        self.abc_to_answer = {
+            "A": OPTIONS[0],
+            "B": OPTIONS[1],
+            "C": OPTIONS[2],
+        }
         self.answer_to_abc = {v: k for k, v in self.abc_to_answer.items()}
 
     def to_answer(self, abc: str) -> str:
@@ -33,12 +38,12 @@ def add_new_command(session, team_id, hand):
 
 @st.cache_data
 def selection_to_image(selection: str, failed: bool) -> str:
-    if selection == "DATA FOUNDATION":
-        key = "A"
-    elif selection == "AI":
-        key = "B"
-    elif selection == "APP":
-        key = "C"
+    if selection == OPTIONS[0]:
+        key = "a"
+    elif selection == OPTIONS[1]:
+        key = "b"
+    elif selection == OPTIONS[2]:
+        key = "c"
     else:
         return ""
     if failed:
@@ -61,7 +66,7 @@ def present_quiz(tab_name: str, max_attempts: int) -> str:
 
     st.write(f"投票回数の上限は {max_attempts}回です。")
     st.subheader("選択肢")
-    options = ["DATA FOUNDATION", "AI", "APP"]
+    options = OPTIONS
     answer = st.radio("Your choice:", options, index=None, key=f"{tab_name}_answer")
     image_file = selection_to_image(answer, False)
     if image_file:

@@ -1,6 +1,8 @@
 # venv
 swtt/
 
+02_create_user.sql
+
 # Secret
 secrets.toml
 

@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from snowflake.snowpark import Session
 from snowflake.snowpark import functions as F
 
@@ -8,6 +9,8 @@ from utils.designs import header_animation, display_problem_statement
 
 MAX_ATTEMPTS_MAIN = 2
 OPTIONS = ["DATA FOUNDATION", "ENTERPRISE AI", "BUILD & DISTRIBUTE APP"]
+
+required_hands_df = pd.DataFrame({"HAND": OPTIONS})
 
 
 class ABCConverter:
@@ -90,10 +93,19 @@ def process_answer(answer: str, state, session: Session) -> None:
     # hands_countsとanswerを突合して、answerよりも投票数が多い選択肢が何個あるかを確認する
     hand_counts_df = hand_counts.toPandas()
     hand_counts_df["HAND"] = hand_counts_df["HAND"].apply(converter.to_answer)
+
+    hand_counts_df = required_hands_df.merge(hand_counts_df, on="HAND", how="left")
+    hand_counts_df["FREQUENCY"] = hand_counts_df["FREQUENCY"].fillna(0)
+
     # answerの投票数を取得
-    vote_counts = hand_counts_df[hand_counts_df["HAND"] == answer]["FREQUENCY"].values[
-        0
-    ]
+    filtered_values = hand_counts_df[hand_counts_df["HAND"] == answer][
+        "FREQUENCY"
+    ].values
+
+    if len(filtered_values) > 0:
+        vote_counts = filtered_values[0]
+    else:
+        vote_counts = 0
     # answerよりも投票数が多い選択肢の数を取得
     lower_detected_times = len(
         hand_counts_df[hand_counts_df["FREQUENCY"] < vote_counts]
